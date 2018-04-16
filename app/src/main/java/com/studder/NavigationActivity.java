@@ -1,10 +1,10 @@
 package com.studder;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -12,9 +12,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+
+import com.studder.adapters.InboxListAdapter;
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    ListView inboxListView;
+
+    String[] inboxItems = { "Marko Kljajic", "Darko Tacic", "Stefan Varajic", "Mirko Mikac"};
+    Integer[] inboxImgs = { R.drawable.ic_menu_camera, R.drawable.ic_menu_camera, R.drawable.ic_menu_camera, R.drawable.ic_menu_camera };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +50,20 @@ public class NavigationActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        InboxListAdapter inboxListAdapter = new InboxListAdapter(this, inboxItems, inboxImgs);
+
+        inboxListView = (ListView) findViewById(R.id.inboxList);
+        inboxListView.setAdapter(inboxListAdapter);
+
+        inboxListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Intent chatActivity = new Intent(NavigationActivity.this, ChatActivity.class);
+                startActivity(chatActivity);
+            }
+        });
     }
 
     @Override
@@ -68,6 +92,17 @@ public class NavigationActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+
+            // Tim6 -> Settings Activity
+            Intent settingsActivity = new Intent(this, SettingsActivity.class);
+            startActivity(settingsActivity);
+            return true;
+        } else if(id == R.id.action_logout){
+
+            // Tim6 -> Clear Data, Add Additional Options
+            Intent logoutActivity = new Intent(this, LoginActivity.class);
+            startActivity(logoutActivity);
+            finish();
             return true;
         }
 
