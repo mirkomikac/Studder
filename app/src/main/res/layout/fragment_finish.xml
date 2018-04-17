@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fragment_personalize"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.personalization.PersonalizeFragment">
+    tools:context=".fragments.personalization.FinishFragment">
 
     <LinearLayout
         android:id="@+id/get_started_form"
@@ -26,20 +24,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="30dp"
-                android:text="@string/personalize_welcome"
+                android:text="@string/personalize_finish"
                 android:clickable="false" />
         </android.support.design.widget.TextInputLayout>
 
 
         <Button
-            android:id="@+id/skipButton"
+            android:id="@+id/finishButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="30dp"
-            android:text="@string/action_skip_personalization" />
-
+            android:text="@string/action_finish_personalizaion" />
 
     </LinearLayout>
 
-</android.support.constraint.ConstraintLayout>
+</FrameLayout>

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -15,6 +16,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.studder.fragments.personalization.CategoriesFragment;
+import com.studder.fragments.personalization.FinishFragment;
+import com.studder.fragments.personalization.ImageDescriptionFragment;
+import com.studder.fragments.personalization.PersonalizeFragment;
+import com.studder.fragments.personalization.TabbedFragment;
 
 public class PersonalizeActivity extends AppCompatActivity {
 
@@ -39,7 +46,9 @@ public class PersonalizeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_personalize);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -48,14 +57,6 @@ public class PersonalizeActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
     }
 
@@ -110,10 +111,8 @@ public class PersonalizeActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_personalize, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-            return rootView;
+
+            return  inflater.inflate(R.layout.fragment_image_description, container, false);
         }
     }
 
@@ -131,13 +130,33 @@ public class PersonalizeActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            //return PlaceholderFragment.newInstance(position + 1);
+
+            //return PlaceholderFragment.newInstance(position + 1);
+
+            switch(position){
+                case 0: {
+                    return PersonalizeFragment.newInstance(position);
+                }
+                case 1: {
+                    return ImageDescriptionFragment.newInstance(position);
+                }
+                case 2: {
+                    return TabbedFragment.newInstance(1);
+                }
+                case 3: {
+                    return FinishFragment.newInstance();
+                }
+                default: {
+                    return PersonalizeFragment.newInstance(position);
+                }
+            }
         }
 
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 3;
+            return 4;
         }
     }
 }

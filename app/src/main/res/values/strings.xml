@@ -98,4 +98,11 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="title_activity_personalize">PersonalizeActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
+
+    <string name="action_skip_personalization">Skip</string>
+    <string name="personalize_welcome">Welcome to Studder, Connect to other people, but first spare a few moments to personalize your account so other people could see you the right way!</string>
+
+    <string name="personalize_finish">You have successfully finished personalizing your account. Press finish and start connecting to people around you!</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="action_finish_personalizaion">Finish</string>
 </resources>
