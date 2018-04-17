@@ -40,13 +40,15 @@ public class ChatActivity extends AppCompatActivity {
     private List<Message> initMessages(){
         List<Message> messages = new ArrayList<Message>();
 
-        Message m1 = new Message("Pozdrav","Mirko","nebitno",  120L,1L);
+        Message m1 = new Message("Pozdrav1","Mirko","nebitno",  120L,1L);
         Message m2 = new Message("Odgovor","Darko","nebitno",  120L,2L);
-        Message m3 = new Message("Pozdrav","Mirko","nebitno",  120L,1L);
+        Message m3 = new Message("Nova poruka","Darko","nebitno",  120L,2L);
+        Message m4 = new Message("Pozdrav","Mirko","nebitno",  120L,1L);
 
         messages.add(m1);
         messages.add(m2);
         messages.add(m3);
+        messages.add(m4);
 
         return messages;
     }

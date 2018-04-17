@@ -16,6 +16,7 @@ import java.util.List;
 public class MessageListAdapter extends RecyclerView.Adapter {
     private static final int VIEW_TYPE_MESSAGE_SENT = 1;
     private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
+    private static final int VIEW_TYPE_MESSAGE_RECEIVED_AFTER = 3;
 
     private Context mContext;
     private List<Message> mMessageList;
@@ -34,6 +35,10 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position) {
         Message message = (Message) mMessageList.get(position);
+
+        if(position > 0 && mMessageList.get(position - 1).getUserId() == mMessageList.get(position).getUserId()){
+            return VIEW_TYPE_MESSAGE_RECEIVED_AFTER;
+        }
 
         if (message.getUserId().equals(1L)) {
             // If the current user is the sender of the message
@@ -57,8 +62,15 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_message_received, parent, false);
             return new ReceivedMessageHolder(view);
+        } else if (viewType == VIEW_TYPE_MESSAGE_RECEIVED_AFTER){
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_message_received, parent, false);
+            ImageView senderImage = (ImageView) view.findViewById(R.id.image_message_profile);
+            TextView senderName = (TextView) view.findViewById(R.id.text_message_name);
+            senderImage.setVisibility(View.INVISIBLE);
+            senderName.setVisibility(View.GONE);
+            return new ReceivedMessageHolder(view);
         }
-
         return null;
     }
 
@@ -72,6 +84,8 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                 ((SentMessageHolder) holder).bind(message);
                 break;
             case VIEW_TYPE_MESSAGE_RECEIVED:
+                ((ReceivedMessageHolder) holder).bind(message);
+            case VIEW_TYPE_MESSAGE_RECEIVED_AFTER:
                 ((ReceivedMessageHolder) holder).bind(message);
         }
     }
