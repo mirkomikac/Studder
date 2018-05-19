@@ -30,7 +30,7 @@ public class NavigationActivity extends AppCompatActivity
     String[] inboxItems = { "Marko Kljajic", "Darko Tacic", "Stefan Varajic", "Mirko Mikac"};
     Integer[] inboxImgs = { R.drawable.ic_menu_camera, R.drawable.ic_menu_camera, R.drawable.ic_menu_camera, R.drawable.ic_menu_camera };
 
-    private Button matchingButton;
+    private FloatingActionButton matchingButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,9 +62,8 @@ public class NavigationActivity extends AppCompatActivity
             }
         });
 
-        //ne radi prebacivanje na matchingActivity, puca aplikacija iz nekog razloga
-        //!!!!!!!!
-        /*matchingButton = (Button) findViewById(R.id.fab);
+        //fixed
+        matchingButton = (FloatingActionButton) findViewById(R.id.fab);
         matchingButton.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -72,7 +71,7 @@ public class NavigationActivity extends AppCompatActivity
                 Intent matchingActivity = new Intent(NavigationActivity.this, MatchingActivity.class);
                 startActivity(matchingActivity);
             }
-        });*/
+        });
     }
 
     @Override
