@@ -15,10 +15,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.studder.adapters.InboxListAdapter;
 import com.studder.adapters.ViewPagerAdapter;
+import com.studder.sharedpreferconfiguration.SaveSharedPreferences;
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -28,21 +30,14 @@ public class NavigationActivity extends AppCompatActivity
     String[] inboxItems = { "Marko Kljajic", "Darko Tacic", "Stefan Varajic", "Mirko Mikac"};
     Integer[] inboxImgs = { R.drawable.ic_menu_camera, R.drawable.ic_menu_camera, R.drawable.ic_menu_camera, R.drawable.ic_menu_camera };
 
+    private Button matchingButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -66,6 +61,18 @@ public class NavigationActivity extends AppCompatActivity
                 startActivity(chatActivity);
             }
         });
+
+        //ne radi prebacivanje na matchingActivity, puca aplikacija iz nekog razloga
+        //!!!!!!!!
+        /*matchingButton = (Button) findViewById(R.id.fab);
+        matchingButton.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                Intent matchingActivity = new Intent(NavigationActivity.this, MatchingActivity.class);
+                startActivity(matchingActivity);
+            }
+        });*/
     }
 
     @Override
@@ -102,6 +109,7 @@ public class NavigationActivity extends AppCompatActivity
         } else if(id == R.id.action_logout){
 
             // Tim6 -> Clear Data, Add Additional Options
+            SaveSharedPreferences.setLoggedIn(getApplicationContext(), false);
             Intent logoutActivity = new Intent(this, LoginActivity.class);
             startActivity(logoutActivity);
             finish();

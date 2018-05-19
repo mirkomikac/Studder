@@ -7,6 +7,7 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -33,6 +34,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.studder.adapters.ViewPagerAdapter;
+import com.studder.sharedpreferconfiguration.SaveSharedPreferences;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,9 +73,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private ImageView[] dots;
     LinearLayout sliderDotsPanel;
 
+    private Button signUpButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //check if user is already logged in
+        if(SaveSharedPreferences.getLoggedIn(getApplicationContext())){
+            Intent navigationActivity = new Intent(LoginActivity.this, NavigationActivity.class);
+            startActivity(navigationActivity);
+            finish();
+        }
+
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -153,6 +165,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         ImageView logoImageView;
         logoImageView = (ImageView) findViewById(R.id.logoImageView);
         logoImageView.setImageResource(R.drawable.logo);
+
+        signUpButton = (Button) findViewById(R.id.email_sign_up_button);
+        signUpButton.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                Intent registerActivity = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(registerActivity);
+
+            }
+        });
 
     }
 
@@ -403,11 +426,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 startActivity(navigationActivity);
                 */
 
+                //user successfully logged in, put him on session
+                SaveSharedPreferences.setLoggedIn(getApplicationContext(), true);
+
                 // Tim6 -> If First Time
                 Intent personalizeActivity = new Intent(LoginActivity.this, PersonalizeActivity.class);
                 startActivity(personalizeActivity);
-
-
 
                 finish();
             } else {

@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -48,7 +49,26 @@
         <activity
             android:name=".PersonalizeActivity"
             android:label="@string/title_activity_personalize"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".RegisterActivity"
+            android:label="@string/title_activity_register"
+            android:parentActivityName=".LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.studder.LoginActivity" />
+        </activity>
+        <activity
+            android:name=".MatchingActivity">
+            aandroid:label="@string/title_activity_matching"
+            android:parentActivityName=".NavigationActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.studder.NavigationActivity" />
+
+        </activity>
     </application>
 
 </manifest>
