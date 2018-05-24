@@ -26,6 +26,10 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         mMessageList = messageList;
     }
 
+    public List<Message> getMessageList(){
+        return mMessageList;
+    }
+
     @Override
     public int getItemCount() {
         return mMessageList.size();
@@ -39,7 +43,8 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         if(position > 0 && mMessageList.get(position - 1).getUserId() == mMessageList.get(position).getUserId()){
             return VIEW_TYPE_MESSAGE_RECEIVED_AFTER;
         }
-
+        //TODO logika iscrtavanja poruka
+        //Proveriti prirodu poruke u odnosu na registrovanog usera.
         if (message.getUserId().equals(1L)) {
             // If the current user is the sender of the message
             return VIEW_TYPE_MESSAGE_SENT;
