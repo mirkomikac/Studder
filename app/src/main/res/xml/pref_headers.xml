@@ -5,7 +5,12 @@
     <header
         android:fragment="com.studder.SettingsActivity$GeneralPreferenceFragment"
         android:icon="@drawable/ic_info_black_24dp"
-        android:title="@string/pref_header_general" />
+        android:title="@string/pref_header_account" />
+
+    <header
+        android:fragment="com.studder.SettingsActivity$MatchingPreferenceFragment"
+        android:icon="@drawable/baseline_sentiment_satisfied_alt_black_24dp"
+        android:title="@string/pref_header_matching" />
 
     <header
         android:fragment="com.studder.SettingsActivity$NotificationPreferenceFragment"
