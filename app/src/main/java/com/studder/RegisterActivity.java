@@ -2,6 +2,7 @@ package com.studder;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -17,9 +18,13 @@ import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.Future;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.Response;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -53,45 +58,28 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 JsonObject  json = mapToJson();
+                String url = "http://10.0.2.2:8080//users";
                 Ion.with(context)
-                        .load("http://10.0.2.2:8080//users")
+                        .load(url)
                         .setJsonObjectBody(json)
                         .asJsonObject()
-                        .setCallback(new FutureCallback<JsonObject >() {
+                        .withResponse()
+                        .setCallback(new FutureCallback<Response<JsonObject>>() {
                             @Override
-                            public void onCompleted(Exception e, JsonObject  result) {
-                                Log.i("Completeeed?", "ok");
+                            public void onCompleted(Exception e, Response<JsonObject>  result) {
+                                if(result.getHeaders().code() == 200){
+                                    Log.i("Completeeed?", "ok");
+                                    Intent loginActivity = new Intent(RegisterActivity.this, LoginActivity.class);
+                                    startActivity(loginActivity);
+                                    finish();
+                                } else {
+                                    Log.e("Completeeed?", "nok");
+                                }
+
                             }
                         });
             }
         });
-
-        /*signUpButton.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View view) {
-                //rest call, register user
-                Ion.with(context)
-                        .load("http://api.icndb.com/jokes/random")
-                        .asString()
-                        .setCallback(new FutureCallback<String>() {
-                            @Override
-                            public void onCompleted(Exception e, String result) {
-
-                                try {
-                                    JSONObject obj = new JSONObject(result);
-                                    JSONObject val = obj.getJSONObject("value");
-                                    String joke = val.getString("joke");
-                                    Log.i("JOKE", joke);
-                                } catch (JSONException e1) {
-                                    Log.wtf("JSONExc", "JSON object didn't arrive.");
-                                }
-
-
-                            }
-                        });
-            }
-        });*/
 
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -101,7 +89,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         JsonObject  json = new JsonObject ();
 
-        json.addProperty("username", fullname.getText().toString());
+        json.addProperty("username", email.getText().toString());
         json.addProperty("password", password.getText().toString());
 
         return json;

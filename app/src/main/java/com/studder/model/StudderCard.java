@@ -6,6 +6,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.Response;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
 import com.mindorks.placeholderview.annotations.Layout;
 import com.mindorks.placeholderview.annotations.Resolve;
@@ -58,7 +62,24 @@ public class StudderCard {
 
     @SwipeIn
     private void onSwipeIn(){
+
         Log.d("EVENT", "onSwipedIn");
+
+        /*Ion.with(mContext)
+                .load("http://10.0.2.2:8080/swipes/1")
+                .asJsonObject()
+                .withResponse()
+                .setCallback(new FutureCallback<Response<JsonObject>>() {
+                    @Override
+                    public void onCompleted(Exception e, Response<JsonObject> result) {
+                        if(result.getHeaders().code() == 200) {
+                            Log.i("SwippedIn", "OK");
+
+                        } else{
+                            Log.e("SwippedIn", "NOK");
+                        }
+                    }
+                });*/
     }
 
     @SwipeInState

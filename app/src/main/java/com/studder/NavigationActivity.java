@@ -11,6 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +19,10 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.Response;
 import com.studder.adapters.InboxListAdapter;
 import com.studder.adapters.ViewPagerAdapter;
 import com.studder.sharedpreferconfiguration.SaveSharedPreferences;
@@ -108,10 +113,25 @@ public class NavigationActivity extends AppCompatActivity
         } else if(id == R.id.action_logout){
 
             // Tim6 -> Clear Data, Add Additional Options
-            SaveSharedPreferences.setLoggedIn(getApplicationContext(), false);
-            Intent logoutActivity = new Intent(this, LoginActivity.class);
-            startActivity(logoutActivity);
-            finish();
+            Ion.with(getApplicationContext())
+                    .load("http://10.0.2.2:8080/auth/logout")
+                    .asJsonObject()
+                    .withResponse()
+                    .setCallback(new FutureCallback<Response<JsonObject>>() {
+                        @Override
+                        public void onCompleted(Exception e, Response<JsonObject> result) {
+                            if(result.getHeaders().code() == 200){
+                                Log.i("Logout", "code == 200");
+                                SaveSharedPreferences.setLoggedIn(getApplicationContext(), false);
+                                Intent logoutActivity = new Intent(NavigationActivity.this, LoginActivity.class);
+                                startActivity(logoutActivity);
+                                finish();
+                            } else{
+                                Log.wtf("Logout", "code != 200");
+                            }
+                        }
+                    });
+
             return true;
         }
 

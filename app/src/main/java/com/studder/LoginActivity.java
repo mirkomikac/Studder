@@ -21,6 +21,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -33,6 +34,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.Response;
 import com.studder.adapters.ViewPagerAdapter;
 import com.studder.sharedpreferconfiguration.SaveSharedPreferences;
 
@@ -74,12 +79,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     LinearLayout sliderDotsPanel;
 
     private Button signUpButton;
+    private boolean loginSuccessfull;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         //check if user is already logged in
+        //if he is send him to main panel, but authenticaiton needs to be established(again login request to server)?
+        //user/pw sharedpref vs sqlite
         if(SaveSharedPreferences.getLoggedIn(getApplicationContext())){
             Intent navigationActivity = new Intent(LoginActivity.this, NavigationActivity.class);
             startActivity(navigationActivity);
@@ -395,23 +403,30 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             // Tim6: Our Code Database
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
+            JsonObject json = new JsonObject();
+            json.addProperty("username", mEmail);
+            json.addProperty("password", mPassword);
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
 
-            // TODO: register the new account here.
-            return true;
+            Ion.with(getApplicationContext())
+                    .load("http://10.0.2.2:8080/auth/login")
+                    .setJsonObjectBody(json)
+                    .asJsonObject()
+                    .withResponse()
+                    .setCallback(new FutureCallback<Response<JsonObject>>() {
+                        @Override
+                        public void onCompleted(Exception e, Response<JsonObject> result) {
+                            if(result.getHeaders().code() == 200) {
+                                Log.i("Login", "OK");
+                                loginSuccessfull = true;
+                            } else{
+                                Log.e("Login", "NOK");
+                                loginSuccessfull = false;
+                            }
+                        }
+                    });
+
+            return loginSuccessfull;
         }
 
         @Override

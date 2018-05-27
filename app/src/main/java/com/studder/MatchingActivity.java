@@ -7,6 +7,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.google.gson.JsonArray;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.Response;
 import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
 import com.studder.model.Profile;
@@ -19,6 +23,7 @@ public class MatchingActivity extends AppCompatActivity {
     private SwipePlaceHolderView swipePlaceHolderView;
     private Context context;
 
+    private ArrayList<Profile> profiles = new ArrayList<Profile>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +41,17 @@ public class MatchingActivity extends AppCompatActivity {
                         .setSwipeInMsgLayoutId(R.layout.swipe_accept)
                         .setSwipeOutMsgLayoutId(R.layout.swipe_reject));
 
+        /*Ion.with(context)
+                .load("http://10.0.2.2/matches")
+                .asJsonArray()
+                .withResponse()
+                .setCallback(new FutureCallback<Response<JsonArray>>() {
+                    @Override
+                    public void onCompleted(Exception e, Response<JsonArray> result) {
+                        profiles.addAll(result.getResult());
+                    }
+                });
+*/
         //for testing purposes
         ArrayList<Profile> profiles = new ArrayList<Profile>();
         for(int i = 0; i < 10; i++){
