@@ -1,7 +1,12 @@
 package com.studder.model;
 
+import android.content.Context;
+import android.os.Environment;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.io.File;
 
 public class Profile {
 
@@ -14,6 +19,8 @@ public class Profile {
     private Integer age;
 
     private String location;
+
+    private String profileImageFilename;
 
     public Profile(String name, String imageUri, Integer age, String location) {
         this.name = name;
@@ -52,5 +59,17 @@ public class Profile {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public static String getProfileImageFilename() {
+
+        return "IMG_" + "NAME" + ".jpg";
+    }
+
+    public static File getPhotoFile(Context context) {
+
+        File externalFilesDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        return (externalFilesDir == null) ? null : new File(externalFilesDir, Profile.getProfileImageFilename());
+
     }
 }

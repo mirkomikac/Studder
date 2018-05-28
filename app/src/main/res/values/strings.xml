@@ -139,12 +139,20 @@
     <string name="title_activity_personalize">PersonalizeActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
-    <string name="action_skip_personalization">Skip</string>
-    <string name="personalize_welcome">Welcome to Studder, Connect to other people, but first spare a few moments to personalize your account so other people could see you the right way!</string>
+    <!-- Personalization -->
+    <string name="personalize_personalize_first_image_content_description">Image of two people matching up</string>
+    <string name="personalize_personalize_skip_label">Skip</string>
+    <string name="personalize_personalize_welcome_message">Welcome to Studder, Connect to other people, but first spare a few moments to personalize your account so other people could see you the right way!</string>
 
-    <string name="personalize_finish">You have successfully finished personalizing your account. Press finish and start connecting to people around you!</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="personalize_personalize_selected_image_display_content_description">Selected image is displayed here</string>
+    <string name="personalize_image_description_photo_galery_label">Gallery</string>
+    <string name="personalize_image_description_personal_description_hint">Type your description (optional)</string>
+
+
     <string name="action_finish_personalizaion">Finish</string>
+    <string name="personalize_finish">You have successfully finished personalizing your account. Press finish and start connecting to people around you!</string>
+
+
 
     <!-- strings related to register activity -->
     <string name="title_activity_register">Sign up</string>
