@@ -26,6 +26,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
@@ -315,6 +316,8 @@ public class LoginActivity extends AppCompatActivity {
 
                                 Log.d(TAG, "UserLoginTask -> doInBackground -> Ion Response == 200");
 
+                                Toast.makeText(LoginActivity.this, R.string.login_register_activity_success, Toast.LENGTH_SHORT);
+
                                 SaveSharedPreferences.setLoggedIn(getApplicationContext(), true);
                                 // Tim6 -> If First Time
                                 Intent personalizeActivity = new Intent(LoginActivity.this, PersonalizeActivity.class);
@@ -325,6 +328,8 @@ public class LoginActivity extends AppCompatActivity {
                                 Log.d(TAG, "UserLoginTask -> doInBackground -> Ion Response == " + result.getHeaders().code());
 
                                 showProgress(false);
+
+                                Toast.makeText(LoginActivity.this, R.string.login_register_activity_fail, Toast.LENGTH_SHORT);
 
                                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                                 mPasswordView.requestFocus();
