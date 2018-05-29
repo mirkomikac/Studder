@@ -58,7 +58,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 JsonObject  json = mapToJson();
-                String url = "http://10.0.2.2:8080//users";
+                String url = "http://192.168.137.1:8080//users";
                 Ion.with(context)
                         .load(url)
                         .setJsonObjectBody(json)

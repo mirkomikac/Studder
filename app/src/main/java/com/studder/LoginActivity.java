@@ -285,7 +285,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
-        return email.contains("@");
+        return true;
     }
 
     private boolean isPasswordValid(String password) {
@@ -409,7 +409,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
 
             Ion.with(getApplicationContext())
-                    .load("http://10.0.2.2:8080/auth/login")
+                    .load("http://192.168.137.1:8080/auth/login")
                     .setJsonObjectBody(json)
                     .asJsonObject()
                     .withResponse()
