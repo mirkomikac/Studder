@@ -76,7 +76,7 @@
 
     <!-- Settings for Matching -->
     <string name="pref_header_matching">Matching</string>
-    
+
     <string name="pref_title_display_location_radius">Location radius</string>
     <string name="pref_default_display_location_radius">2</string>
 
@@ -154,5 +154,14 @@
 
     <!-- strings related to register activity -->
     <string name="title_activity_matching">Matching</string>
+
+    <!-- strings related to swipe fragment -->
+    <string name="swipe_fragment_content_description">Image representing social activities available through the application</string>
+
+
+    <string name="swipe_fragment_message_discover_people">Discover new and interesting people nearby</string>
+    <string name="swipe_fragment_message_swipe">Swipe right to hit a like on someone and swipe left to move on</string>
+    <string name="swipe_fragment_message_swipe_match">If he/she swipes right as well, you are a match!</string>
+    <string name="swipe_fragment_message_swipe_message">Only the ones that you have swiped right can send you messages</string>
 
 </resources>
