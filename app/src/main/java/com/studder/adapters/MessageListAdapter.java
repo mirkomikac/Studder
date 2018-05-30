@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.studder.R;
 import com.studder.model.Message;
+import com.studder.utils.ClientUtils;
 
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     public int getItemViewType(int position) {
         Message message = (Message) mMessageList.get(position);
 
-        if(position > 0 && mMessageList.get(position - 1).getUserId() == mMessageList.get(position).getUserId()){
+        if(position > 0 && mMessageList.get(position - 1).getUserId() == mMessageList.get(position).getUserId() && mMessageList.get(position).getUserId() != 1L){
             return VIEW_TYPE_MESSAGE_RECEIVED_AFTER;
         }
         //TODO logika iscrtavanja poruka
@@ -109,8 +110,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             messageText.setText(message.getMessage());
 
             // Format the stored timestamp into a readable String using method.
-            //timeText.setText(Utils.formatDateTime(message.getCreatedAt()));
-            timeText.setText("11:50");
+            timeText.setText(ClientUtils.formatDateTime(message.getCreatedAt()));
         }
     }
 
@@ -131,8 +131,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             messageText.setText(message.getMessage());
 
             // Format the stored timestamp into a readable String using method.
-            //timeText.setText(Utils.formatDateTime(message.getCreatedAt()));
-            timeText.setText("11:50");
+            timeText.setText(ClientUtils.formatDateTime(message.getCreatedAt()));
 
             nameText.setText(message.getUserName());
 
