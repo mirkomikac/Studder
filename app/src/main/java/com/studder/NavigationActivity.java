@@ -114,7 +114,7 @@ public class NavigationActivity extends AppCompatActivity
 
             // Tim6 -> Clear Data, Add Additional Options
             Ion.with(getApplicationContext())
-                    .load("http://10.0.2.2:8080/auth/logout")
+                    .load("http://192.168.137.1:8080/auth/logout")
                     .asJsonObject()
                     .withResponse()
                     .setCallback(new FutureCallback<Response<JsonObject>>() {

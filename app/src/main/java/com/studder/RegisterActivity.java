@@ -64,7 +64,9 @@ public class RegisterActivity extends AppCompatActivity {
                 }
 
                 JsonObject  json = mapToJson();
+
                 String url = "http://10.0.2.2:8080//users";
+                //String url = "http://192.168.137.1:8080//users";
                 Ion.with(getApplicationContext())
                         .load(url)
                         .setJsonObjectBody(json)
