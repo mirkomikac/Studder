@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_margin="10dp">
+
+    <ImageView
+        android:id="@+id/image_view_chat_box_row_user_image"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_menu_camera" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraint_layout_chat_box_row_name_message_holder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:src="@drawable/ic_menu_camera"
+        android:layout_marginLeft="10dp"
+        app:layout_constraintStart_toEndOf="@id/image_view_chat_box_row_user_image">
+
+        <TextView
+            android:id="@+id/text_view_chat_box_row_user_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            tools:text="@string/chat_box_row_user_name" />
+
+        <TextView
+            android:id="@+id/text_view_chat_box_row_last_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLength="40"
+            app:layout_constraintStart_toEndOf="@string/chat_box_row_message"
+            app:layout_constraintTop_toBottomOf="@id/text_view_chat_box_row_user_name"
+            tools:text="@string/chat_box_row_message" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:orientation="vertical"
+        app:layout_constraintStart_toEndOf="@id/constraint_layout_chat_box_row_name_message_holder">
+
+        <TextClock
+            android:id="@+id/text_clock_chat_box_row_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="@string/chat_box_row_date" />
+
+        <ImageView
+            android:id="@+id/image_view_chat_box_row_seen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_menu_camera"
+            android:layout_marginTop="5dp"
+            app:layout_constraintTop_toBottomOf="@id/text_clock_chat_box_row_time"
+            app:layout_constraintEnd_toEndOf="@id/text_clock_chat_box_row_time" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>
