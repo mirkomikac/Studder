@@ -76,7 +76,7 @@
 
     <!-- Settings for Matching -->
     <string name="pref_header_matching">Matching</string>
-    
+
     <string name="pref_title_display_location_radius">Location radius</string>
     <string name="pref_default_display_location_radius">2</string>
 
@@ -139,12 +139,20 @@
     <string name="title_activity_personalize">PersonalizeActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
-    <string name="action_skip_personalization">Skip</string>
-    <string name="personalize_welcome">Welcome to Studder, Connect to other people, but first spare a few moments to personalize your account so other people could see you the right way!</string>
+    <!-- Personalization -->
+    <string name="personalize_personalize_first_image_content_description">Image of two people matching up</string>
+    <string name="personalize_personalize_skip_label">Skip</string>
+    <string name="personalize_personalize_welcome_message">Welcome to Studder, Connect to other people, but first spare a few moments to personalize your account so other people could see you the right way!</string>
 
-    <string name="personalize_finish">You have successfully finished personalizing your account. Press finish and start connecting to people around you!</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="personalize_personalize_selected_image_display_content_description">Selected image is displayed here</string>
+    <string name="personalize_image_description_photo_galery_label">Gallery</string>
+    <string name="personalize_image_description_personal_description_hint">Type your description (optional)</string>
+
+
     <string name="action_finish_personalizaion">Finish</string>
+    <string name="personalize_finish">You have successfully finished personalizing your account. Press finish and start connecting to people around you!</string>
+
+
 
     <!-- strings related to register activity -->
     <string name="title_activity_register">Sign up</string>
@@ -154,5 +162,18 @@
 
     <!-- strings related to register activity -->
     <string name="title_activity_matching">Matching</string>
+    <string name="register_activity_confirm_password_label">Confirm password</string>
+    <string name="register_activity_confirm_password_error">The confirmation password does not match with the input password</string>
+    <string name="login_register_activity_success">Success</string>
+    <string name="login_register_activity_fail">Fail</string>
+
+    <!-- strings related to swipe fragment -->
+    <string name="swipe_fragment_content_description">Image representing social activities available through the application</string>
+
+
+    <string name="swipe_fragment_message_discover_people">Discover new and interesting people nearby</string>
+    <string name="swipe_fragment_message_swipe">Swipe right to hit a like on someone and swipe left to move on</string>
+    <string name="swipe_fragment_message_swipe_match">If he/she swipes right as well, you are a match!</string>
+    <string name="swipe_fragment_message_swipe_message">Only the ones that you have swiped right can send you messages</string>
 
 </resources>

@@ -1,15 +1,14 @@
 package com.studder.fragments.personalization;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.studder.NavigationActivity;
 import com.studder.R;
@@ -29,7 +28,19 @@ public class PersonalizeFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     private static final String MPOSITION = "POSITION";
+    private static String TAG = "PersonalizeFragment";
+
     private Integer position;
+
+    private Button mSkipButton;
+
+    // In case additional extra needs to be provided for the next activity
+    private Intent newNavigationIntent(){
+
+        Log.d(TAG, "newNavigationIntent()");
+        Intent navigationIntent = new Intent(getActivity(), NavigationActivity.class);
+        return navigationIntent;
+    }
 
     public PersonalizeFragment() {
         // Required empty public constructor
@@ -42,6 +53,9 @@ public class PersonalizeFragment extends Fragment {
      * @return A new instance of fragment PersonalizeFragment.
      */
     public static PersonalizeFragment newInstance(int position) {
+
+        Log.d(TAG,"newInstance(int position) -> " + position);
+
         PersonalizeFragment fragment = new PersonalizeFragment();
 
         Bundle args = new Bundle();
@@ -54,20 +68,22 @@ public class PersonalizeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
 
+        Log.d(TAG, "onCreateView(...)");
+
+        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_personalize, container, false);
 
-        Button skipButton = (Button) view.findViewById(R.id.skipButton);
+        mSkipButton = (Button) view.findViewById(R.id.button_personalize_personalize_skip_personalization);
 
-        skipButton.setOnClickListener(new View.OnClickListener() {
+        Log.d(TAG, "onCreateView -> mSkipButton.setOnClickListener");
+
+        mSkipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent navigationActivity = new Intent(getActivity(), NavigationActivity.class);
-                startActivity(navigationActivity);
+                Intent navigationIntent = newNavigationIntent();
+                startActivity(navigationIntent);
                 getActivity().finish();
-
             }
         });
 
