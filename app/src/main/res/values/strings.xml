@@ -77,7 +77,7 @@
     <!-- Settings for Matching -->
     <string name="pref_header_matching">Matching</string>
 
-    <string name="pref_title_display_location_radius">Location radius</string>
+    <string name="pref_title_display_location_radius">Location radius (km)</string>
     <string name="pref_default_display_location_radius">2</string>
 
     <string name="pref_title_interested_in">Interested in</string>
@@ -175,5 +175,15 @@
     <string name="swipe_fragment_message_swipe">Swipe right to hit a like on someone and swipe left to move on</string>
     <string name="swipe_fragment_message_swipe_match">If he/she swipes right as well, you are a match!</string>
     <string name="swipe_fragment_message_swipe_message">Only the ones that you have swiped right can send you messages</string>
+
+    <!-- strings related to password preference -->
+    <string name="prompt_old_password">Old password</string>
+    <string name="prompt_first_password">New password</string>
+    <string name="prompt_second_password">Repeat new password</string>
+
+    <!-- zakom je... -->
+    <string name="passwordPreferenceButton">password_preference_button</string>
+    
+    <string name="password_preference_dialog_title">Change password</string>
 
 </resources>

@@ -87,7 +87,7 @@ public class LoginActivity extends AppCompatActivity {
 
         String URL = "content://com.studder.Studder.UserProvider/users/";
 
-        ContentValues values = new ContentValues();
+        /*ContentValues values = new ContentValues();
         values.put(UserTable.Cols.USERNAME, "stfnvar@gmail.com");
         values.put(UserTable.Cols.PASSWORD, "stfnvar");
 
@@ -103,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(this, c.getString(c.getColumnIndex(UserTable.Cols._ID)), Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "onCreate -> " + c.getString(c.getColumnIndex(UserTable.Cols.USERNAME)));
             } while (c.moveToNext());
-        }
+        }*/
 
 
         Log.d(TAG, "onCreate(Bundle)");
@@ -331,7 +331,7 @@ public class LoginActivity extends AppCompatActivity {
             json.addProperty("password", mPassword);
 
             Ion.with(getApplicationContext())
-                    .load("http://192.168.137.1:8080/auth/login")
+                    .load("http://10.0.2.2:8080/auth/login")
                     .setJsonObjectBody(json)
                     .asJsonObject()
                     .withResponse()
