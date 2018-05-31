@@ -9,13 +9,15 @@ public class StudderSQLiteOpenHelper extends SQLiteOpenHelper {
     private static final String TAG = "StudderSQLiteOpenHelper";
 
     private static final int VERSION = 1;
-    private static final String DATABASE_NAME = "studder.db";
+    public static final String DATABASE_NAME = "studder.db";
 
     private static final String SQL_CREATE_MESSAGE =
             "CREATE TABLE " + MessageTable.NAME + " (" +
                     MessageTable.Cols._ID + " INTEGER PRIMARY KEY," +
                     MessageTable.Cols.TEXT + " TEXT NOT NULL," +
                     MessageTable.Cols.MESSAGE_STATUS + " TEXT," +
+                    MessageTable.Cols.USER_MATCH_ID + " INTEGER, " +
+                    MessageTable.Cols.SENDER_ID + " INTEGER, " +
                     "FOREIGN KEY("+MessageTable.Cols.USER_MATCH_ID+") REFERENCES "+UserMatchTable.NAME+"("+UserMatchTable.Cols._ID+")," +
                     "FOREIGN KEY("+MessageTable.Cols.SENDER_ID+") REFERENCES "+UserTable.NAME+"("+UserTable.Cols._ID+")" +
                     ")";
@@ -65,8 +67,8 @@ public class StudderSQLiteOpenHelper extends SQLiteOpenHelper {
                     UserTable.Cols.SWIPE_THROW + " TEXT)";
 
 
-    public StudderSQLiteOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, DATABASE_NAME, factory, VERSION);
+    public StudderSQLiteOpenHelper(Context context) {
+        super(context, DATABASE_NAME, null, VERSION);
     }
 
     @Override

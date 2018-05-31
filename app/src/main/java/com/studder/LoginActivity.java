@@ -3,7 +3,10 @@ package com.studder;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,6 +36,7 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
 import com.studder.adapters.ViewPagerAdapter;
+import com.studder.database.schema.UserTable;
 import com.studder.fragments.reusable.SliderFragment;
 import com.studder.fragments.reusable.SwipeFragment;
 import com.studder.sharedpreferconfiguration.SaveSharedPreferences;
@@ -79,6 +83,28 @@ public class LoginActivity extends AppCompatActivity {
         //check if user is already logged in
         //if he is send him to main panel, but authentication needs to be established(again login request to server)?
         //user/pw sharedpref vs sqlite
+
+
+        String URL = "content://com.studder.Studder.UserProvider/users/";
+
+        ContentValues values = new ContentValues();
+        values.put(UserTable.Cols.USERNAME, "stfnvar@gmail.com");
+        values.put(UserTable.Cols.PASSWORD, "stfnvar");
+
+        Uri uri = getContentResolver().insert(UserTable.CONTENT_URI, values);
+
+        Uri users = Uri.parse(URL);
+
+        //Cursor c = getContentResolver().query(uri, null, null, null);
+        Cursor c = managedQuery(uri, null, null, null, null);
+
+        if(c.moveToFirst()){
+            do {
+                Toast.makeText(this, c.getString(c.getColumnIndex(UserTable.Cols._ID)), Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "onCreate -> " + c.getString(c.getColumnIndex(UserTable.Cols.USERNAME)));
+            } while (c.moveToNext());
+        }
+
 
         Log.d(TAG, "onCreate(Bundle)");
 

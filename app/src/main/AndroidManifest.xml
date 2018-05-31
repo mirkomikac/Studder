@@ -80,6 +80,11 @@
                 android:resource="@xml/provider_paths"/>
         </provider>
 
+        <provider
+            android:authorities="com.studder.Studder.UserProvider"
+            android:name=".database.schema.UserTable">
+        </provider>
+
     </application>
 
 </manifest>
