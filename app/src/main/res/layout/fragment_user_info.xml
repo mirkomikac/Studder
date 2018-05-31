@@ -74,6 +74,33 @@
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <SeekBar
+                    android:id="@+id/user_info_fragment_range_seek_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:progressDrawable="@drawable/seekbar_progressbar"
+                    android:min="2"
+                    android:max="250"
+                    android:progress="15"
+                    android:thumb="@drawable/seekbar_thumb"
+                    android:thumbTintMode="multiply" />
+
+                <TextView
+                    android:id="@+id/user_info_fragment_range_text_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:text="Range is set to: 15km"
+                    android:textStyle="bold" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="16dp">
 

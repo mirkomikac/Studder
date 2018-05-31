@@ -7,6 +7,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SeekBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.studder.R;
 
@@ -21,6 +24,9 @@ import com.studder.R;
 public class UserInfoFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
+
+    private SeekBar seekBar;
+    private TextView textView;
 
     public UserInfoFragment() {
     }
@@ -46,7 +52,28 @@ public class UserInfoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_user_info, container, false);
+        View view = inflater.inflate(R.layout.fragment_user_info, container, false);
+        seekBar = (SeekBar) view.findViewById(R.id.user_info_fragment_range_seek_bar);
+        textView = (TextView) view.findViewById(R.id.user_info_fragment_range_text_field);
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            int seekBarProgress = 0;
+
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                seekBarProgress = progress;
+            }
+
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                textView.setText("Range is set to " + seekBarProgress + " km");
+                Toast.makeText(getActivity().getApplicationContext(), "Range is set to " + seekBarProgress + " km", Toast.LENGTH_SHORT).show();
+            }
+
+        });
+        return view;
     }
 
     @Override
