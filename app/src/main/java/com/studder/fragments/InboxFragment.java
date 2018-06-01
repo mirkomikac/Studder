@@ -140,9 +140,13 @@ public class InboxFragment extends Fragment {
 
                                     for(int i = 0;i < matches.size();i++){
                                         if(matches.get(i).getParticipant1().getId() == id){
-                                            users.add(matches.get(i).getParticipant2());
+                                            User user = matches.get(i).getParticipant2();
+                                            user.setmUserMatch(matches.get(i));
+                                            users.add(user);
                                         } else {
-                                            users.add(matches.get(i).getParticipant1());
+                                            User user = matches.get(i).getParticipant1();
+                                            user.setmUserMatch(matches.get(i));
+                                            users.add(user);
                                         }
                                     }
 

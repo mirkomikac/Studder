@@ -2,6 +2,7 @@ package com.studder.holders;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -63,8 +64,15 @@ public class InboxRowViewHolder extends RecyclerView.ViewHolder implements View.
     public void bind(User user){
         Log.d(TAG, "bind(User) -> " + user.toString());
         mUserNameTextView.setText(user.getName() + " " + user.getSurname());
-        mUserLastMessageTextView.setText(user.getUsername());
+        mUserLastMessageTextView.setText(user.getmUserMatch().getLastMessage());
+        mUserLastMessageTimeTextClock.setText(user.getmUserMatch().getLastMessageDate().toString());
+
+        if(!user.getmUserMatch().getLastMessageSeen()){
+            mUserLastMessageTextView.setTypeface(null, Typeface.BOLD | Typeface.ITALIC);
+        }
+
         mUser = user;
     }
+
 
 }

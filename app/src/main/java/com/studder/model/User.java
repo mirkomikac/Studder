@@ -26,6 +26,8 @@ public class User implements Serializable {
     private String userGender;
     private String swipeThrow;
 
+    private UserMatch mUserMatch;
+
     public User() {
     }
 
@@ -191,5 +193,13 @@ public class User implements Serializable {
 
     public void setSwipeThrow(String swipeThrow) {
         this.swipeThrow = swipeThrow;
+    }
+
+    public UserMatch getmUserMatch() {
+        return mUserMatch;
+    }
+
+    public void setmUserMatch(UserMatch mUserMatch) {
+        this.mUserMatch = mUserMatch;
     }
 }
