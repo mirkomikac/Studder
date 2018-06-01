@@ -20,6 +20,16 @@
 
     <EditTextPreference
         android:capitalize="words"
+        android:defaultValue="@string/pref_default_display_surname"
+        android:inputType="textCapWords"
+        android:key="example_surname"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_display_surname" />
+
+    <EditTextPreference
+        android:capitalize="words"
         android:defaultValue="@string/pref_default_display_email"
         android:inputType="textCapWords"
         android:key="example_email"
@@ -78,13 +88,13 @@
 
     <EditTextPreference
         android:capitalize="words"
-        android:defaultValue="@string/pref_default_display_address"
+        android:defaultValue="@string/pref_default_display_city"
         android:inputType="text"
-        android:key="example_address"
+        android:key="example_city"
         android:maxLines="2"
         android:selectAllOnFocus="true"
         android:singleLine="false"
-        android:title="@string/pref_title_display_address" />
+        android:title="@string/pref_title_display_city" />
 
 
     <!-- LISTA.... NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to

@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.DialogPreference;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -26,6 +27,13 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.Response;
 
 import java.text.AttributedCharacterIterator;
 import java.util.List;
@@ -45,6 +53,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
 
     private static final String TAG = "SettingsActivityLOG";
+
+    private static Context context;
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
@@ -54,7 +64,30 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();
-            //rest update...
+            //take value and map it to property
+            Log.i(TAG, value.toString());
+            JsonObject user = new JsonObject();
+            //when you get username from sharedpref, put it in so server can update...
+            user.addProperty("username", "UBACITI");
+            if(preference instanceof EditTextPreference){
+                Log.i(TAG, preference.getKey());
+                switch (preference.getKey()){
+                    case "example_text": user.addProperty("name", stringValue);
+                    case "example_surname": user.addProperty("surname", stringValue);
+                    case "example_email": user.addProperty("username", stringValue);
+                    //case "example_age": user.addProperty("age", stringValue);
+                    case "example_city": user.addProperty("city", stringValue);
+                    case "example_location_radius": user.addProperty("radius", stringValue);
+                }
+            } else if(preference instanceof ListPreference){
+                Log.i(TAG, preference.getKey());
+                switch (preference.getKey()){
+                    case "sex_list" : user.addProperty("userGender", stringValue);
+                    case "interested_in_list" : user.addProperty("swipe_throw", stringValue);
+                }
+            }
+
+
 
 
             if (preference instanceof ListPreference) {
@@ -96,6 +129,23 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 // simple string representation.
                 preference.setSummary(stringValue);
             }
+
+            Ion.with(context)
+                    .load("PUT","http://10.0.2.2:8080/users")
+                    .setJsonObjectBody(user)
+                    .asJsonObject()
+                    .withResponse()
+                    .setCallback(new FutureCallback<Response<JsonObject>>() {
+                        @Override
+                        public void onCompleted(Exception e, Response<JsonObject> result) {
+                            if(result.getHeaders().code() == 200){
+                                Log.i(TAG, "updated");
+                            } else{
+                                Log.e(TAG, "server response != 200");
+                            }
+                        }
+                    });
+
             return true;
         }
     };
@@ -134,6 +184,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupActionBar();
+        context = getApplicationContext();
     }
 
     /**
@@ -218,7 +269,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("example_email"));
             bindPreferenceSummaryToValue(findPreference("example_age"));
             bindPreferenceSummaryToValue(findPreference("sex_list"));
-            bindPreferenceSummaryToValue(findPreference("example_address"));
+            bindPreferenceSummaryToValue(findPreference("example_city"));
         }
 
         @Override
