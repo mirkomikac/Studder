@@ -153,7 +153,6 @@
     <string name="personalize_finish">You have successfully finished personalizing your account. Press finish and start connecting to people around you!</string>
 
 
-
     <!-- strings related to register activity -->
     <string name="title_activity_register">Sign up</string>
     <string name="action_sign_up">Don\'t have an account? Sign up!</string>
@@ -191,5 +190,8 @@
 
     <string name="pref_default_display_surname">Doe</string>
     <string name="pref_title_display_surname">Surname</string>
-
+  
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+  
 </resources>
