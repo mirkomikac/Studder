@@ -59,8 +59,8 @@
         <item>1</item>
     </string-array>
 
-    <string name="pref_title_display_address">Address</string>
-    <string name="pref_default_display_address">Blabla 101</string>
+    <string name="pref_title_display_city">City</string>
+    <string name="pref_default_display_city">Novi Sad</string>
 
     <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
     <string-array name="pref_example_list_titles">
@@ -77,7 +77,7 @@
     <!-- Settings for Matching -->
     <string name="pref_header_matching">Matching</string>
 
-    <string name="pref_title_display_location_radius">Location radius</string>
+    <string name="pref_title_display_location_radius">Location radius (km)</string>
     <string name="pref_default_display_location_radius">2</string>
 
     <string name="pref_title_interested_in">Interested in</string>
@@ -175,7 +175,23 @@
     <string name="swipe_fragment_message_swipe_match">If he/she swipes right as well, you are a match!</string>
     <string name="swipe_fragment_message_swipe_message">Only the ones that you have swiped right can send you messages</string>
 
+    <!-- strings related to password preference -->
+    <string name="prompt_old_password">Old password</string>
+    <string name="prompt_first_password">New password</string>
+    <string name="prompt_second_password">Repeat new password</string>
+
+    <string name="password_preference_dialog_title">Change password</string>
+
+    <string name="two_new_passwords_fail">Failed! New passwords don\'t match.</string>
+    <string name="old_password_fail">Failed! You typed wrong old password.</string>
+    <string name="change_password_success">Success! You changed your password.</string>
+
+    <string name="change_password_dialog_tittle">Change password</string>
+
+    <string name="pref_default_display_surname">Doe</string>
+    <string name="pref_title_display_surname">Surname</string>
+  
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
+  
 </resources>
