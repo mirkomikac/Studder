@@ -4,18 +4,18 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
-import com.studder.holders.ChatBoxRowViewHolder;
+import com.studder.holders.InboxRowViewHolder;
 
-public class ChatBoxAdapter extends RecyclerView.Adapter<ChatBoxRowViewHolder>{
+public class ChatBoxAdapter extends RecyclerView.Adapter<InboxRowViewHolder>{
 
     @NonNull
     @Override
-    public ChatBoxRowViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public InboxRowViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return null;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ChatBoxRowViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull InboxRowViewHolder holder, int position) {
 
     }
 
