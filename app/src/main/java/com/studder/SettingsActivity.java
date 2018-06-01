@@ -3,6 +3,7 @@ package com.studder;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -26,6 +27,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -34,6 +36,7 @@ import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
+import com.studder.database.schema.UserTable;
 
 import java.text.AttributedCharacterIterator;
 import java.util.List;
@@ -68,22 +71,24 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             Log.i(TAG, value.toString());
             JsonObject user = new JsonObject();
             //when you get username from sharedpref, put it in so server can update...
-            user.addProperty("username", "UBACITI");
+            SharedPreferences sp = context.getSharedPreferences("USER_INFO", MODE_PRIVATE);
+            String username = sp.getString(UserTable.Cols.USERNAME, "Unknown value");
+            user.addProperty("username", username);
             if(preference instanceof EditTextPreference){
                 Log.i(TAG, preference.getKey());
                 switch (preference.getKey()){
-                    case "example_text": user.addProperty("name", stringValue);
-                    case "example_surname": user.addProperty("surname", stringValue);
-                    case "example_email": user.addProperty("username", stringValue);
+                    case "example_text": user.addProperty("name", stringValue); break;
+                    case "example_surname": user.addProperty("surname", stringValue); break;
+                    //case "example_email": user.addProperty("username", stringValue);
                     //case "example_age": user.addProperty("age", stringValue);
-                    case "example_city": user.addProperty("city", stringValue);
-                    case "example_location_radius": user.addProperty("radius", stringValue);
+                    case "example_city": user.addProperty("city", stringValue); break;
+                    case "example_location_radius": user.addProperty("radius", stringValue); break;
                 }
             } else if(preference instanceof ListPreference){
                 Log.i(TAG, preference.getKey());
                 switch (preference.getKey()){
                     case "sex_list" : user.addProperty("userGender", stringValue);
-                    case "interested_in_list" : user.addProperty("swipe_throw", stringValue);
+                    case "interested_in_list" : user.addProperty("swipeThrow", stringValue);
                 }
             }
 
@@ -131,7 +136,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             }
 
             Ion.with(context)
-                    .load("PUT","http://10.0.2.2:8080/users")
+                    .load("http://10.0.2.2:8080/users/update")
                     .setJsonObjectBody(user)
                     .asJsonObject()
                     .withResponse()
@@ -245,28 +250,49 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class GeneralPreferenceFragment extends PreferenceFragment {
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            //ako ne radi kao view u xml-u... i vuci
+            SharedPreferences sp = context.getSharedPreferences("USER_INFO", MODE_PRIVATE);
+            String name = sp.getString(UserTable.Cols.NAME, "Unknown value");
+            String surname = sp.getString(UserTable.Cols.SURNAME, "Unknown value");
+            String userGender = sp.getString(UserTable.Cols.USER_GENDER, "Unknown value");
+            if(findPreference("example_text") instanceof EditTextPreference) {
+                EditTextPreference namePref = (EditTextPreference) findPreference("example_text");
+                namePref.setSummary(name);
+                namePref.setText(name);
+            }
+            if(findPreference("example_surname") instanceof EditTextPreference) {
+                EditTextPreference surnamePref = (EditTextPreference) findPreference("example_surname");
+                surnamePref.setSummary(surname);
+                surnamePref.setText(surname);
+            }
+
+            //age doesn't exist in preferences
+            if(findPreference("sex_list") instanceof EditTextPreference) {
+                EditTextPreference sexListPref = (EditTextPreference) findPreference("sex_list");
+                sexListPref.setSummary(userGender);
+                sexListPref.setText(userGender);
+            }
+            //city doesn't exist in preference, push it later..
+
+            return super.onCreateView(inflater, container, savedInstanceState);
+        }
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_general);
             setHasOptionsMenu(true);
 
-            /*Preference passwordButton = findPreference(getString(R.string.passwordPreferenceButton));
-            passwordButton.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object o) {
-
-
-                    return true;
-                }
-            });*/
-
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("example_text"));
-            bindPreferenceSummaryToValue(findPreference("example_email"));
+            //bindPreferenceSummaryToValue(findPreference("example_email"));
+            bindPreferenceSummaryToValue(findPreference("example_surname"));
             bindPreferenceSummaryToValue(findPreference("example_age"));
             bindPreferenceSummaryToValue(findPreference("sex_list"));
             bindPreferenceSummaryToValue(findPreference("example_city"));
@@ -286,6 +312,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     //This fragment shows matching preferences only
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class MatchingPreferenceFragment extends PreferenceFragment{
+
+        //matching onCreateView()...
+
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);

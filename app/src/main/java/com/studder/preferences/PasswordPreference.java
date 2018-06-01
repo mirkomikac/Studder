@@ -1,6 +1,7 @@
 package com.studder.preferences;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -14,6 +15,7 @@ import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
 import com.studder.LoginActivity;
 import com.studder.R;
+import com.studder.database.schema.UserTable;
 
 public class PasswordPreference extends DialogPreference {
 
@@ -57,10 +59,12 @@ public class PasswordPreference extends DialogPreference {
             String newSecondPw = newPasswordSecond.getText().toString();
             String oldPw = oldPassword.getText().toString();
             if(newFirstPw.equals(newSecondPw)){
+                SharedPreferences pref = getContext().getSharedPreferences("USER_INFO", Context.MODE_PRIVATE);
+                String username = pref.getString(UserTable.Cols.USERNAME, "Unknown");
                 JsonObject json = new JsonObject();
-                json.addProperty("username", "PROMENI POSLE");
+                json.addProperty("username", username);
                 json.addProperty("password", oldPw);
-                json.addProperty("surname", newFirstPw);
+                json.addProperty("newPw", newFirstPw);
 
                 Ion.with(getContext())
                         .load("PUT","http://10.0.2.2:8080/users")
