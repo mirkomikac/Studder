@@ -61,6 +61,7 @@ public class UserInfoFragment extends Fragment {
 
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 seekBarProgress = progress;
+                textView.setText("Range is set to " + seekBarProgress + " km");
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
