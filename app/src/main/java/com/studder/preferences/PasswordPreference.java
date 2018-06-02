@@ -31,14 +31,6 @@ public class PasswordPreference extends DialogPreference {
         setDialogTitle(R.string.change_password_dialog_tittle);
     }
 
-        /*protected View onCreateDialogView(){
-            View v = LayoutInflater.from(getContext()).inflate(R.layout.password_preference, null);
-            oldPassword = v.findViewById(R.id.edit_text_old_password);
-            newPasswordFirst = v.findViewById(R.id.edit_text_first_password);
-            newPasswordSecond = v.findViewById(R.id.edit_text_second_password);
-            return v;
-        }*/
-
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
@@ -52,9 +44,7 @@ public class PasswordPreference extends DialogPreference {
         super.onDialogClosed(positiveResult);
 
         if (positiveResult) {
-           Log.i(TAG, "SUCCESS");
-           //update user, rest call to server
-            //username needs to be sended, currently don't have it in sharedpref
+           Log.i(TAG, "Positive Result");
             String newFirstPw = newPasswordFirst.getText().toString();
             String newSecondPw = newPasswordSecond.getText().toString();
             String oldPw = oldPassword.getText().toString();
@@ -67,16 +57,22 @@ public class PasswordPreference extends DialogPreference {
                 json.addProperty("newPw", newFirstPw);
 
                 Ion.with(getContext())
-                        .load("PUT","http://10.0.2.2:8080/users")
+                        .load("http://10.0.2.2:8080/users/update")
                         .setJsonObjectBody(json)
-                        .asJsonObject()
+                        .asString()
                         .withResponse()
-                        .setCallback(new FutureCallback<Response<JsonObject>>() {
+                        .setCallback(new FutureCallback<Response<String>>() {
                             @Override
-                            public void onCompleted(Exception e, Response<JsonObject> result) {
+                            public void onCompleted(Exception e, Response<String> result) {
                                 if(result.getHeaders().code() == 200){
-                                    Log.i(TAG, "updated");
-                                    Toast.makeText(getContext(), R.string.change_password_success, Toast.LENGTH_SHORT).show();
+                                    Log.i(TAG, result.getResult());
+                                    if(!result.getResult().equals("-1")){
+                                        Log.i(TAG, "updated");
+                                        Toast.makeText(getContext(), R.string.change_password_success, Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Log.e(TAG, "bad old pw");
+                                        Toast.makeText(getContext(), R.string.old_password_fail, Toast.LENGTH_SHORT).show();
+                                    }
                                 } else{
                                     Log.e(TAG, "server response != 200");
                                     Toast.makeText(getContext(), R.string.old_password_fail, Toast.LENGTH_SHORT).show();

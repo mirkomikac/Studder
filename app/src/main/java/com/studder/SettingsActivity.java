@@ -253,11 +253,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            //ako ne radi kao view u xml-u... i vuci
             SharedPreferences sp = context.getSharedPreferences("USER_INFO", MODE_PRIVATE);
             String name = sp.getString(UserTable.Cols.NAME, "Unknown value");
             String surname = sp.getString(UserTable.Cols.SURNAME, "Unknown value");
             String userGender = sp.getString(UserTable.Cols.USER_GENDER, "Unknown value");
+            String city = sp.getString(UserTable.Cols.CITY, "Unknown value");
             if(findPreference("example_text") instanceof EditTextPreference) {
                 EditTextPreference namePref = (EditTextPreference) findPreference("example_text");
                 namePref.setSummary(name);
@@ -269,13 +269,22 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 surnamePref.setText(surname);
             }
 
-            //age doesn't exist in preferences
-            if(findPreference("sex_list") instanceof EditTextPreference) {
-                EditTextPreference sexListPref = (EditTextPreference) findPreference("sex_list");
+            //AGE doesn't exist in preferences
+
+            if(findPreference("sex_list") instanceof ListPreference) {
+                ListPreference sexListPref = (ListPreference) findPreference("sex_list");
+                //FEMAIL VS FEMALE.....
                 sexListPref.setSummary(userGender);
-                sexListPref.setText(userGender);
+                if(userGender.equals("MALE"))
+                    sexListPref.setValueIndex(0);
+                else if(userGender.equals("FEMAIL"))
+                    sexListPref.setValueIndex(1);
             }
-            //city doesn't exist in preference, push it later..
+            if(findPreference("example_city") instanceof EditTextPreference){
+                EditTextPreference cityPref = (EditTextPreference) findPreference("example_city");
+                cityPref.setSummary(city);
+                cityPref.setText(city);
+            }
 
             return super.onCreateView(inflater, container, savedInstanceState);
         }
@@ -313,7 +322,30 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class MatchingPreferenceFragment extends PreferenceFragment{
 
-        //matching onCreateView()...
+        @Override
+        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            SharedPreferences sp = context.getSharedPreferences("USER_INFO", MODE_PRIVATE);
+
+            String locationRadius = sp.getString(UserTable.Cols.RADIUS, "Unknown value");
+            String interestedIn = sp.getString(UserTable.Cols.SWIPE_THROW, "Unknown value");
+
+            if(findPreference("example_location_radius") instanceof EditTextPreference){
+                EditTextPreference radiusPref = (EditTextPreference) findPreference("example_location_radius");
+                radiusPref.setSummary(locationRadius);
+                radiusPref.setText(locationRadius);
+            }
+
+            if(findPreference("interested_in_list") instanceof  ListPreference){
+                ListPreference interestedInPref = (ListPreference) findPreference("interested_in_list");
+                interestedInPref.setSummary(interestedIn);
+                if(interestedIn.equals("MALE"))
+                    interestedInPref.setValueIndex(0);
+                else if(interestedIn.equals("FEMAIL"))
+                    interestedInPref.setValueIndex(1);
+            }
+
+            return super.onCreateView(inflater, container, savedInstanceState);
+        }
 
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
