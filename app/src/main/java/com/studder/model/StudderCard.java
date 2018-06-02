@@ -1,6 +1,7 @@
 package com.studder.model;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ import com.mindorks.placeholderview.annotations.View;
 import com.mindorks.placeholderview.annotations.swipe.*;
 
 import com.studder.R;
+import com.studder.database.schema.UserTable;
 
 //class that binds to studder_card_view layout
 @Layout(R.layout.studder_card_view)
@@ -35,6 +37,8 @@ public class StudderCard {
     private Context mContext;
     private SwipePlaceHolderView mSwipeView;
 
+    private static final String TAG = "Event";
+
     public StudderCard(Context context, Profile profile, SwipePlaceHolderView swipeView){
         this.mContext = context;
         this.mProfile = profile;
@@ -51,45 +55,51 @@ public class StudderCard {
 
     @SwipeOut
     private void onSwipedOut(){
-        Log.d("EVENT", "onSwipedOut");
+        Log.d(TAG, "onSwipedOut");
         mSwipeView.addView(this);
     }
 
     @SwipeCancelState
     private void onSwipeCancelState(){
-        Log.d("EVENT", "onSwipeCancelState");
+        Log.d(TAG, "onSwipeCancelState");
     }
 
     @SwipeIn
     private void onSwipeIn(){
 
-        Log.d("EVENT", "onSwipedIn");
+        Log.d(TAG, "onSwipedIn");
 
-        /*Ion.with(mContext)
-                .load("http://10.0.2.2:8080/swipes/1")
+        JsonObject json = new JsonObject();
+        json.addProperty("isLiked", true);
+        //HTTP 400, cannot deserialize boolean value...
+        //izgleda da ne moze sam boolean u json body...
+        //popraviti
+        Ion.with(mContext)
+                .load("http://10.0.2.2:8080/swipes/" + mProfile.getId())
+                .setJsonObjectBody(json)
                 .asJsonObject()
                 .withResponse()
                 .setCallback(new FutureCallback<Response<JsonObject>>() {
                     @Override
                     public void onCompleted(Exception e, Response<JsonObject> result) {
                         if(result.getHeaders().code() == 200) {
-                            Log.i("SwippedIn", "OK");
+                            Log.i("TAG", "OK");
 
                         } else{
-                            Log.e("SwippedIn", "NOK");
+                            Log.e("TAG", "NOK");
                         }
                     }
-                });*/
+                });
     }
 
     @SwipeInState
     private void onSwipeInState(){
-        Log.d("EVENT", "onSwipeInState");
+        Log.d(TAG, "onSwipeInState");
     }
 
     @SwipeOutState
     private void onSwipeOutState(){
-        Log.d("EVENT", "onSwipeOutState");
+        Log.d(TAG, "onSwipeOutState");
     }
 
 }
