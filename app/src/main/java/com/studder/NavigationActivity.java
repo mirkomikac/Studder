@@ -4,8 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +25,7 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
 import com.studder.fragments.InboxFragment;
+import com.studder.fragments.ProfileFragment;
 import com.studder.sharedpreferconfiguration.SaveSharedPreferences;
 
 public class NavigationActivity extends AppCompatActivity
@@ -30,6 +34,7 @@ public class NavigationActivity extends AppCompatActivity
     public static final String TAG = "NavigationActivity";
 
     private FloatingActionButton matchingButton;
+    private ViewPager mFragmentVewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +55,14 @@ public class NavigationActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        mFragmentVewPager = findViewById(R.id.view_pager_app_bar_navigation_fragments);
+
 
         FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().add(R.id.relative_layout_app_bar_navigation_inbox_fragment, InboxFragment.newInstance()).commit();
-        Log.d(TAG, "onCreate(Bunlde) -> added InboxFragmet");
+        SwipePagerAdapter spa = new SwipePagerAdapter(fm);
 
+        mFragmentVewPager.setAdapter(spa);
+        Log.d(TAG, "onCreate(Bunlde) -> added SwipePagerAdapter -> ViewPager");
 
         matchingButton = (FloatingActionButton) findViewById(R.id.fab);
         matchingButton.setOnClickListener(new View.OnClickListener(){
@@ -154,5 +162,34 @@ public class NavigationActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+
+    private class SwipePagerAdapter extends FragmentPagerAdapter{
+
+        public SwipePagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+
+            switch (position){
+                case 0:{
+                    return InboxFragment.newInstance();
+                }
+                case 1:{
+                    return ProfileFragment.newInstance();
+                }
+                default:{
+                    return  InboxFragment.newInstance();
+                }
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
     }
 }
