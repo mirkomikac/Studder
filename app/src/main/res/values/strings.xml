@@ -190,8 +190,10 @@
 
     <string name="pref_default_display_surname">Doe</string>
     <string name="pref_title_display_surname">Surname</string>
-  
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-  
+
+    <string name="fragment_inbox_search_hint">Search...</string>
+
 </resources>

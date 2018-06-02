@@ -5,8 +5,17 @@
     android:layout_height="match_parent"
     tools:context=".fragments.InboxFragment">
 
+    <android.support.v7.widget.SearchView
+        android:layout_width="match_parent"
+        android:id="@+id/search_view_fragment_inbox_search"
+        android:autofillHints="Matches"
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.SearchView>
+
     <include
         layout="@layout/content_navigation"
+        android:layout_below="@id/search_view_fragment_inbox_search"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
