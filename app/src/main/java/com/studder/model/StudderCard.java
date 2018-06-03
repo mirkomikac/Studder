@@ -56,7 +56,25 @@ public class StudderCard {
     @SwipeOut
     private void onSwipedOut(){
         Log.d(TAG, "onSwipedOut");
-        mSwipeView.addView(this);
+       // mSwipeView.addView(this);
+        JsonObject json = new JsonObject();
+        json.addProperty("isLiked", false);
+        Ion.with(mContext)
+                .load("http://10.0.2.2:8080/swipes/" + mProfile.getId())
+                .setJsonObjectBody(json)
+                .asJsonObject()
+                .withResponse()
+                .setCallback(new FutureCallback<Response<JsonObject>>() {
+                    @Override
+                    public void onCompleted(Exception e, Response<JsonObject> result) {
+                        if(result.getHeaders().code() == 200) {
+                            Log.i("TAG", "OK");
+
+                        } else{
+                            Log.e("TAG", "NOK");
+                        }
+                    }
+                });
     }
 
     @SwipeCancelState
@@ -71,9 +89,6 @@ public class StudderCard {
 
         JsonObject json = new JsonObject();
         json.addProperty("isLiked", true);
-        //HTTP 400, cannot deserialize boolean value...
-        //izgleda da ne moze sam boolean u json body...
-        //popraviti
         Ion.with(mContext)
                 .load("http://10.0.2.2:8080/swipes/" + mProfile.getId())
                 .setJsonObjectBody(json)
