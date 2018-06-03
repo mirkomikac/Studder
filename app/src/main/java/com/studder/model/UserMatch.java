@@ -11,7 +11,7 @@ public class UserMatch {
     private String lastMessage;
     private Date lastMessageDate;
     private Boolean mutedParticipant1;
-    private Boolean getMutedParticipant2;
+    private Boolean mutedParticipant2;
     private Boolean lastMessageSeen;
 
     public Long getId() {
@@ -70,12 +70,12 @@ public class UserMatch {
         this.mutedParticipant1 = mutedParticipant1;
     }
 
-    public Boolean getGetMutedParticipant2() {
-        return getMutedParticipant2;
+    public Boolean getMutedParticipant2() {
+        return mutedParticipant2;
     }
 
-    public void setGetMutedParticipant2(Boolean getMutedParticipant2) {
-        this.getMutedParticipant2 = getMutedParticipant2;
+    public void setMutedParticipant2(Boolean mutedParticipant2) {
+        this.mutedParticipant2 = mutedParticipant2;
     }
 
     public Boolean getLastMessageSeen() {
