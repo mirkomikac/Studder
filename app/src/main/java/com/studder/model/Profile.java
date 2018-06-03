@@ -10,6 +10,8 @@ import java.io.File;
 
 public class Profile {
 
+    private int id;
+
     //@SerializedName("name")
     //@Expose
     private String name;
@@ -22,7 +24,8 @@ public class Profile {
 
     private String profileImageFilename;
 
-    public Profile(String name, String imageUri, Integer age, String location) {
+    public Profile(int id, String name, String imageUri, Integer age, String location) {
+        this.id = id;
         this.name = name;
         this.imageUri = imageUri;
         this.age = age;
@@ -71,5 +74,13 @@ public class Profile {
         File externalFilesDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         return (externalFilesDir == null) ? null : new File(externalFilesDir, Profile.getProfileImageFilename());
 
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
