@@ -25,6 +25,7 @@ public class User implements Serializable {
     private Boolean isDeactivated;
     private String userGender;
     private String swipeThrow;
+    private String city;
 
     private UserMatch mUserMatch;
 
@@ -201,5 +202,13 @@ public class User implements Serializable {
 
     public void setmUserMatch(UserMatch mUserMatch) {
         this.mUserMatch = mUserMatch;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 }

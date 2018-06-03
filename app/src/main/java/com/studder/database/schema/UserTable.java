@@ -57,6 +57,7 @@ public final class UserTable extends ContentProvider{
         public static final String IS_DEACTIVATED = "is_deactivated";
         public static final String USER_GENDER = "user_gender";
         public static final String SWIPE_THROW = "swipe_throw";
+        public static final String CITY = "city";
     }
 
     @Override
