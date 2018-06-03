@@ -200,4 +200,9 @@
     <string name="fragment_profile_matched_information">Matched</string>
 
     <string name="fragment_profile_change_info_label">Change profile info</string>
+
+    <string name="user_profile_fragment_swipes_text_view">Swipes</string>
+    <string name="user_profile_fragment_matches_text_view">Matched</string>
+    <string name="user_profile_fragment_age_text_view">Age</string>
+
 </resources>
