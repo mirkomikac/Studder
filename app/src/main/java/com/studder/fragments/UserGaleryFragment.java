@@ -8,9 +8,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +25,10 @@ import com.studder.adapters.ImageAdapter;
 import com.studder.database.schema.UserTable;
 import com.studder.model.Media;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -62,8 +63,7 @@ public class UserGaleryFragment extends Fragment {
      *
      * @return A new instance of fragment UserGaleryFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static UserGaleryFragment newInstance(String param1, String param2) {
+    public static UserGaleryFragment newInstance() {
         UserGaleryFragment fragment = new UserGaleryFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -81,6 +81,7 @@ public class UserGaleryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_user_galery, container, false);
 
         SharedPreferences pref = getContext().getSharedPreferences("USER_INFO", Context.MODE_PRIVATE);
+        Long userId = 1L;
         String name = pref.getString(UserTable.Cols.NAME, "Unknown");
         String surname = pref.getString(UserTable.Cols.SURNAME, "Unknown");
         String about = pref.getString(UserTable.Cols.DESCRIPTION, "Unknown");
@@ -98,9 +99,10 @@ public class UserGaleryFragment extends Fragment {
         nameTextView.setText(name);
         surnameTextView.setText(surname);
         aboutTextView.setText(about);
+        //ageTextView.setText(calculateAge(age));
 
         loadImagesTask = new LoadImagesTask();
-        loadImagesTask.execute((Void) null);
+        loadImagesTask.execute(userId);
         return view;
     }
 
@@ -109,6 +111,25 @@ public class UserGaleryFragment extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
+
+    private int calculateAge(String dateString) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Calendar calendar1 = Calendar.getInstance();
+        Calendar calendar2 = Calendar.getInstance();
+        try {
+            Date date = simpleDateFormat.parse(dateString);
+            calendar1.setTime(date);
+            int diff = calendar2.get(Calendar.YEAR) - calendar1.get(Calendar.YEAR);
+            if (calendar1.get(Calendar.MONTH) > calendar2.get(Calendar.MONTH) || (calendar1.get(Calendar.MONTH)
+                    == calendar2.get(Calendar.MONTH) && calendar1.get(Calendar.DATE) > calendar2.get(Calendar.DATE))) {
+                diff--;
+            }
+            return diff;
+        } catch (ParseException e) {
+            return 0;
+        }
+    }
+
 
     @Override
     public void onAttach(Context context) {
@@ -135,32 +156,32 @@ public class UserGaleryFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    private class LoadImagesTask extends AsyncTask<Void, Void, Void> {
+    private class LoadImagesTask extends AsyncTask<Long, Void, Void> {
 
         @Override
-        protected Void doInBackground(Void... booleans) {
+        protected Void doInBackground(Long... userId) {
             Ion.with(getContext())
-                    .load("GET", "http://10.0.2.2:8080/media")
+                    .load("GET", "http://10.0.2.2:8080/media/" + userId)
                     .as(new TypeToken<List<Media>>(){})
                     .withResponse()
                     .setCallback(new FutureCallback<Response<List<Media>>>() {
-                            @Override
-                            public void onCompleted(Exception e, Response<List<Media>> result) {
-                                if(result.getHeaders().code() == 200){
-                                    List<Media> media = result.getResult();
+                        @Override
+                        public void onCompleted(Exception e, Response<List<Media>> result) {
+                            if(result.getHeaders().code() == 200){
+                                List<Media> media = result.getResult();
 
-                                    for(int i =0;i < media.size();i++) {
-                                        byte[] bitmapBytes = Base64.decode(media.get(i).getPath(), Base64.DEFAULT);
-                                        Bitmap bmp = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
-                                        bmp = bmp.createScaledBitmap(bmp, 200, 200, false);
-                                        media.get(i).setBitmap(BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length));
-                                    }
-
-                                    ImageAdapter booksAdapter = new ImageAdapter(getActivity(), media);
-                                    gridImageView.setAdapter(booksAdapter);
+                                for(int i =0;i < media.size();i++) {
+                                    byte[] bitmapBytes = Base64.decode(media.get(i).getPath(), Base64.DEFAULT);
+                                    Bitmap bmp = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
+                                    bmp = bmp.createScaledBitmap(bmp, 200, 200, false);
+                                    media.get(i).setBitmap(BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length));
                                 }
+
+                                ImageAdapter booksAdapter = new ImageAdapter(getActivity(), media);
+                                gridImageView.setAdapter(booksAdapter);
                             }
-                        });
+                        }
+                    });
             return null;
         }
     }
