@@ -196,4 +196,8 @@
 
     <string name="fragment_inbox_search_hint">Search...</string>
 
+    <string name="fragment_profile_swiped_information">Swiped</string>
+    <string name="fragment_profile_matched_information">Matched</string>
+
+    <string name="fragment_profile_change_info_label">Change profile info</string>
 </resources>

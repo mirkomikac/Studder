@@ -122,7 +122,7 @@ public class InboxFragment extends Fragment {
                                         User user = matches.get(i).getParticipant2();
                                         user.setmUserMatch(matches.get(i));
                                         String fullname = user.getName() + " " + user.getSurname();
-                                        if(fullname.contains(searchParam)) {
+                                        if(fullname.toLowerCase().contains(searchParam.toLowerCase())) {
                                             users.add(user);
                                         }
                                     } else {
@@ -130,7 +130,7 @@ public class InboxFragment extends Fragment {
                                         user.setmUserMatch(matches.get(i));
                                         users.add(user);
                                         String fullname = user.getName() + " " + user.getSurname();
-                                        if(fullname.contains(searchParam)) {
+                                        if(fullname.toLowerCase().contains(searchParam.toLowerCase())) {
                                             users.add(user);
                                         }
                                     }
