@@ -110,14 +110,12 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_margin="@dimen/fab_margin"
             android:background="@android:color/darker_gray"/>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view_fragment_profile_images"
-            android:layout_marginTop="@dimen/fab_margin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view_fragment_profile_images"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
     </LinearLayout>
 

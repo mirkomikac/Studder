@@ -120,12 +120,11 @@ public class ImageDescriptionFragment extends Fragment {
 
         Log.d(TAG, "onSaveInstanceState(@NonNull Bundle)");
 
-        /*
         if((mImageFile == null) && (!mImageFile.exists())){
             Uri uri = FileProvider.getUriForFile(getContext(), getContext().getApplicationContext().getPackageName() + ".com.studder.provider", mImageFile);
             outState.putString(IMAGE_PATH, getImagePath(uri));
         }
-        */
+
     }
 
 
@@ -145,8 +144,6 @@ public class ImageDescriptionFragment extends Fragment {
             String path = savedInstanceState.getString(IMAGE_PATH);
             mImageFile = new File(path);
         }
-
-
     }
 
     @Override

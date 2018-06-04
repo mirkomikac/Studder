@@ -17,7 +17,7 @@ import com.studder.database.schema.UserTable;
 import com.studder.model.Media;
 import com.studder.model.User;
 
-public class GalleryItemViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener{
+public class GalleryItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
 
     public static final String TAG = "GalleryItemViewHolder";
 
@@ -50,6 +50,10 @@ public class GalleryItemViewHolder extends RecyclerView.ViewHolder implements Vi
         mMedia = media;
     }
 
+    @Override
+    public void onClick(View v) {
+        
+    }
 
     @Override
     public boolean onLongClick(View v) {

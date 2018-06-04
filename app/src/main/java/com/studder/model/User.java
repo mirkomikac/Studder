@@ -27,6 +27,7 @@ public class User implements Serializable {
     private String swipeThrow;
 
     private UserMatch mUserMatch;
+    private String profileImageEncoded;
 
     public User() {
     }
@@ -201,5 +202,13 @@ public class User implements Serializable {
 
     public void setmUserMatch(UserMatch mUserMatch) {
         this.mUserMatch = mUserMatch;
+    }
+
+    public String getProfileImageEncoded() {
+        return profileImageEncoded;
+    }
+
+    public void setProfileImageEncoded(String profileImageEncoded) {
+        this.profileImageEncoded = profileImageEncoded;
     }
 }
