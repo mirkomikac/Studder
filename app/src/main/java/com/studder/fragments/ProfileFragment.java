@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -36,6 +37,7 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
 import com.studder.R;
+import com.studder.SettingsActivity;
 import com.studder.database.schema.UserTable;
 import com.studder.holders.GalleryItemViewHolder;
 import com.studder.model.Media;
@@ -62,6 +64,7 @@ public class ProfileFragment extends Fragment {
     private ImageButton mTakeImageNowImageButton;
     private ImageButton mChooseImageImageButton;
     private ImageView mProfileImageView;
+    private Button mChangeProfileInfoButton;
 
     private File mImageFile;
 
@@ -143,6 +146,7 @@ public class ProfileFragment extends Fragment {
         mChooseImageImageButton = view.findViewById(R.id.image_button_fragment_profile_chose_photo);
         mTakeImageNowImageButton = view.findViewById(R.id.image_button_fragment_profile_take_photo_now);
         mProfileImageView = view.findViewById(R.id.image_view_fragment_profile_profile_image);
+        mChangeProfileInfoButton = view.findViewById(R.id.button_fragment_profile_change_info);
 
         mNameSurnameTextView.setText(name + " " + surname);
 
@@ -168,6 +172,14 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 startActivityForResult(captureImageIntent, REQUEST_TAKE_IMAGE);
+            }
+        });
+
+        mChangeProfileInfoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), SettingsActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -290,7 +302,7 @@ public class ProfileFragment extends Fragment {
                     public void onCompleted(Exception e, Response<Media> result) {
                         if (result.getHeaders().code() == 200) {
                             Toast.makeText(getContext(), R.string.login_register_activity_success, Toast.LENGTH_SHORT).show();
-                            refreshContent();
+                            refreshContent(null);
                         } else {
                             Toast.makeText(getContext(), R.string.login_register_activity_fail, Toast.LENGTH_SHORT).show();
                         }
@@ -316,7 +328,7 @@ public class ProfileFragment extends Fragment {
             View view = inflater.inflate(R.layout.gallery_image_item, parent, false);
 
             Log.d(TAG, "ImageViewAdapeter -> onCreateViewHolder(...) -> success");
-            return new GalleryItemViewHolder(view, getActivity());
+            return new GalleryItemViewHolder(view, getActivity(), ProfileFragment.this);
 
         }
 
@@ -359,7 +371,7 @@ public class ProfileFragment extends Fragment {
         return path;
     }
 
-    public void refreshContent() {
+    public void refreshContent(Bitmap bmp) {
         super.onResume();
         SharedPreferences pref = getContext().getSharedPreferences("USER_INFO", Context.MODE_PRIVATE);
         Integer id = pref.getInt(UserTable.Cols._ID, -1);
@@ -395,6 +407,10 @@ public class ProfileFragment extends Fragment {
                             }
                         }
                     });
+        }
+
+        if(bmp != null){
+            mProfileImageView.setImageBitmap(bmp);
         }
     }
 }
