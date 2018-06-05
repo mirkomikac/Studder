@@ -28,6 +28,7 @@ public class User implements Serializable {
 
     private UserMatch mUserMatch;
     private String profileImageEncoded;
+    private String userDeviceToken;
 
     public User() {
     }
@@ -210,5 +211,13 @@ public class User implements Serializable {
 
     public void setProfileImageEncoded(String profileImageEncoded) {
         this.profileImageEncoded = profileImageEncoded;
+    }
+
+    public String getUserDeviceToken() {
+        return userDeviceToken;
+    }
+
+    public void setUserDeviceToken(String userDeviceToken) {
+        this.userDeviceToken = userDeviceToken;
     }
 }

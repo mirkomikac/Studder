@@ -105,10 +105,10 @@ public class GalleryItemViewHolder extends RecyclerView.ViewHolder implements Vi
                                                     @Override
                                                     public void onCompleted(Exception e, Response<JsonObject> result) {
                                                         if(result.getHeaders().code() == 200){
-                                                            Toast.makeText(mContext, mContext.getResources().getString(R.string.alert_dialog_fragment_profile_delete_success), Toast.LENGTH_LONG).show();
+                                                            Toast.makeText(mContext.getApplicationContext(), mContext.getResources().getString(R.string.alert_dialog_fragment_profile_delete_success), Toast.LENGTH_LONG).show();
                                                             mProfileFragment.refreshContent(null);
                                                         } else {
-                                                            Toast.makeText(mContext, mContext.getResources().getString(R.string.alert_dialog_fragment_profile_delete_fail), Toast.LENGTH_LONG).show();
+                                                            Toast.makeText(mContext.getApplicationContext(), mContext.getResources().getString(R.string.alert_dialog_fragment_profile_delete_fail), Toast.LENGTH_LONG).show();
                                                         }
                                                     }
                                                 });
@@ -141,7 +141,7 @@ public class GalleryItemViewHolder extends RecyclerView.ViewHolder implements Vi
                                                     @Override
                                                     public void onCompleted(Exception e, Response<JsonObject> result) {
                                                         if(result.getHeaders().code() == 200){
-                                                            Toast.makeText(mContext, mContext.getResources().getString(R.string.alert_dialog_fragment_profile_set_as_profile_success), Toast.LENGTH_LONG).show();
+                                                            Toast.makeText(mContext.getApplicationContext(), mContext.getResources().getString(R.string.alert_dialog_fragment_profile_set_as_profile_success), Toast.LENGTH_LONG).show();
                                                             byte[] bitmapBytes = Base64.decode(mMedia.getEncodedImage(), Base64.DEFAULT);
                                                             Bitmap bmp = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
                                                             bmp = bmp.createScaledBitmap(bmp, 350, 350, false);

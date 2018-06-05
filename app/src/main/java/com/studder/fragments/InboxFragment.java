@@ -115,6 +115,9 @@ public class InboxFragment extends Fragment {
                     .setCallback(new FutureCallback<Response<List<UserMatch>>>() {
                         @Override
                         public void onCompleted(Exception e, Response<List<UserMatch>> result) {
+                            if(result == null){
+                                return;
+                            }
                             if(result.getHeaders().code() == 200){
                                 Log.d(TAG, "MatchedFetch -> doInBackground -> ion -> success -> 200");
                                 List<UserMatch> matches = result.getResult();
