@@ -1,17 +1,27 @@
 package com.studder.fragments.personalization;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.studder.R;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Calendar;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,6 +37,13 @@ public class UserInfoFragment extends Fragment {
 
     private SeekBar seekBar;
     private TextView textView;
+    private Button birthdayButton;
+    private TextView birthdayTextView;
+    private DatePickerDialog.OnDateSetListener mDateSetListener;
+    private int dayOfBirth = 0;
+    private int monthOfBirth = 0;
+    private int yearOfBirth = 0;
+    private int chosenRange = 70;
 
     public UserInfoFragment() {
     }
@@ -55,13 +72,14 @@ public class UserInfoFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_user_info, container, false);
         seekBar = (SeekBar) view.findViewById(R.id.user_info_fragment_range_seek_bar);
         textView = (TextView) view.findViewById(R.id.user_info_fragment_range_text_field);
+        birthdayButton = (Button) view.findViewById(R.id.user_info_fragment_birthday_button);
+        birthdayTextView = (TextView) view.findViewById(R.id.user_info_fragment_birthday_text_view);
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            int seekBarProgress = 0;
 
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                seekBarProgress = progress;
-                textView.setText("Range is set to " + seekBarProgress + " km");
+                chosenRange = progress;
+                textView.setText("Range is set to " + chosenRange + " km");
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -69,11 +87,35 @@ public class UserInfoFragment extends Fragment {
             }
 
             public void onStopTrackingTouch(SeekBar seekBar) {
-                textView.setText("Range is set to " + seekBarProgress + " km");
-                Toast.makeText(getActivity().getApplicationContext(), "Range is set to " + seekBarProgress + " km", Toast.LENGTH_SHORT).show();
+                textView.setText("Range is set to " + chosenRange + " km");
+                Toast.makeText(getActivity().getApplicationContext(), "Range is set to " + chosenRange + " km", Toast.LENGTH_SHORT).show();
             }
 
         });
+
+        mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                dayOfBirth = dayOfMonth;
+                monthOfBirth = month;
+                yearOfBirth = year;
+                birthdayTextView.setText("Birthday: " + dayOfMonth + "/" + month + "/" + year);
+            }
+        };
+
+        birthdayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar calendar = Calendar.getInstance();
+                yearOfBirth = calendar.get(Calendar.YEAR);
+                monthOfBirth = calendar.get(Calendar.MONTH);
+                dayOfBirth = calendar.get(Calendar.DAY_OF_MONTH);
+                DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), android.R.style.Theme_Holo_Dialog_MinWidth, mDateSetListener, yearOfBirth, monthOfBirth, dayOfBirth);
+                datePickerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                datePickerDialog.show();
+            }
+        });
+
         return view;
     }
 
