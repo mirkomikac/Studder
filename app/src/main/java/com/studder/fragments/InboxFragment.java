@@ -2,12 +2,16 @@ package com.studder.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +35,8 @@ public class InboxFragment extends Fragment {
     public static final String TAG = "InboxFragment";
 
     private RecyclerView mInboxListRecyclerView;
+    private SearchView mInboxSearchSearchView;
+
     private InboxListAdapter mInboxListAdapter;
 
     private MatchedFetch mMatchedFetch;
@@ -77,9 +83,78 @@ public class InboxFragment extends Fragment {
         mMatchedFetch = new MatchedFetch();
         mMatchedFetch.execute((Void) null);
 
+        mInboxSearchSearchView = view.findViewById(R.id.search_view_fragment_inbox_search);
+        mInboxSearchSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                refreshMatched(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                refreshMatched(newText);
+                return false;
+            }
+        });
+
         Log.d(TAG, "onCreateView(...) -> success");
         return view;
     }
+
+
+    private void refreshMatched(String name){
+        SharedPreferences preferences = getActivity().getApplicationContext().getSharedPreferences("USER_INFO", Context.MODE_PRIVATE);
+        final Integer id = preferences.getInt(UserTable.Cols._ID, -1);
+        final String searchParam = name;
+        if(id != -1) {
+            Ion.with(getContext())
+                    .load("http://10.0.2.2:8080/matches/getMatchesMe")
+                    .as(new TypeToken<List<UserMatch>>() {})
+                    .withResponse()
+                    .setCallback(new FutureCallback<Response<List<UserMatch>>>() {
+                        @Override
+                        public void onCompleted(Exception e, Response<List<UserMatch>> result) {
+                            if(result == null){
+                                return;
+                            }
+                            if(result.getHeaders().code() == 200){
+                                Log.d(TAG, "MatchedFetch -> doInBackground -> ion -> success -> 200");
+                                List<UserMatch> matches = result.getResult();
+                                ArrayList<User> users = new ArrayList<>();
+
+                                for(int i = 0;i < matches.size();i++){
+                                    if(matches.get(i).getParticipant1().getId() == id){
+                                        User user = matches.get(i).getParticipant2();
+                                        user.setmUserMatch(matches.get(i));
+                                        String fullname = user.getName() + " " + user.getSurname();
+                                        if(fullname.toLowerCase().contains(searchParam.toLowerCase())) {
+                                            users.add(user);
+                                        }
+                                    } else {
+                                        User user = matches.get(i).getParticipant1();
+                                        user.setmUserMatch(matches.get(i));
+                                        users.add(user);
+                                        String fullname = user.getName() + " " + user.getSurname();
+                                        if(fullname.toLowerCase().contains(searchParam.toLowerCase())) {
+                                            users.add(user);
+                                        }
+                                    }
+                                }
+
+                                mInboxListAdapter = new InboxListAdapter(users);
+                                mInboxListRecyclerView.setAdapter(mInboxListAdapter);
+                                mInboxListAdapter.notifyDataSetChanged();
+
+                                Log.d(TAG, "MatchedFetch -> doInBackground -> ion -> success -> added adapter to RecyclerView");
+                            } else {
+                                Log.d(TAG, "MatchedFetch -> doInBackground -> ion -> fail -> " + result.getHeaders().code());
+                            }
+                        }
+                    });
+        }
+    }
+
 
     private class InboxListAdapter extends RecyclerView.Adapter<InboxRowViewHolder> {
 
@@ -115,6 +190,15 @@ public class InboxFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume() {
+
+        Log.d(TAG, "onResume()");
+
+        refreshMatched("");
+        super.onResume();
+    }
+
     private class MatchedFetch extends AsyncTask<Void, Void, Boolean>{
 
         @Override
@@ -128,7 +212,8 @@ public class InboxFragment extends Fragment {
             if(id != -1) {
                 String ipConfig = getResources().getString(R.string.ipconfig);
                 Ion.with(getContext())
-                        .load("http://"+ipConfig+"/matches/getMatches/" + id)
+                        .load("http://"+ipConfig+"/matches/getMatchesMe")
+                        //.load("http://10.0.2.2:8080/matches/getMatchesMe")
                         .as(new TypeToken<List<UserMatch>>() {})
                         .withResponse()
                         .setCallback(new FutureCallback<Response<List<UserMatch>>>() {
@@ -142,10 +227,12 @@ public class InboxFragment extends Fragment {
                                     for(int i = 0;i < matches.size();i++){
                                         if(matches.get(i).getParticipant1().getId() == id){
                                             User user = matches.get(i).getParticipant2();
+                                            user.setProfileImageEncoded(matches.get(i).getParticipant2().getProfileImageEncoded());
                                             user.setmUserMatch(matches.get(i));
                                             users.add(user);
                                         } else {
                                             User user = matches.get(i).getParticipant1();
+                                            user.setProfileImageEncoded(matches.get(i).getParticipant1().getProfileImageEncoded());
                                             user.setmUserMatch(matches.get(i));
                                             users.add(user);
                                         }

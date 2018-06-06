@@ -25,8 +25,11 @@ public class User implements Serializable {
     private Boolean isDeactivated;
     private String userGender;
     private String swipeThrow;
+    private String city;
 
     private UserMatch mUserMatch;
+    private String profileImageEncoded;
+    private String userDeviceToken;
 
     public User() {
     }
@@ -201,5 +204,28 @@ public class User implements Serializable {
 
     public void setmUserMatch(UserMatch mUserMatch) {
         this.mUserMatch = mUserMatch;
+    }
+
+    public String getProfileImageEncoded() {
+        return profileImageEncoded;
+    }
+
+    public void setProfileImageEncoded(String profileImageEncoded) {
+        this.profileImageEncoded = profileImageEncoded;
+    }
+
+    public String getUserDeviceToken() {
+        return userDeviceToken;
+    }
+
+    public void setUserDeviceToken(String userDeviceToken) {
+        this.userDeviceToken = userDeviceToken;
+    }
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 }

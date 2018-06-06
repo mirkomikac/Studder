@@ -64,7 +64,8 @@ public class StudderSQLiteOpenHelper extends SQLiteOpenHelper {
                     UserTable.Cols.IS_PRIVATE + " INTEGER, " +
                     UserTable.Cols.IS_DEACTIVATED + " INTEGER, " +
                     UserTable.Cols.USER_GENDER + " TEXT, " +
-                    UserTable.Cols.SWIPE_THROW + " TEXT)";
+                    UserTable.Cols.SWIPE_THROW + " TEXT, " +
+                    UserTable.Cols.CITY + " TEXT)";
 
 
     public StudderSQLiteOpenHelper(Context context) {

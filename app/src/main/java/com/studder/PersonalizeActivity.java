@@ -18,6 +18,7 @@ import com.studder.fragments.personalization.FinishFragment;
 import com.studder.fragments.personalization.ImageDescriptionFragment;
 import com.studder.fragments.personalization.PersonalizeFragment;
 import com.studder.fragments.personalization.TabbedFragment;
+import com.studder.fragments.personalization.UserInfoFragment;
 
 public class PersonalizeActivity extends AppCompatActivity {
 
@@ -150,13 +151,15 @@ public class PersonalizeActivity extends AppCompatActivity {
                 case 0: {
                     return PersonalizeFragment.newInstance(position);
                 }
-                case 1: {
+                case 1:
+                    return UserInfoFragment.newInstance();
+                case 2: {
                     return ImageDescriptionFragment.newInstance(position);
                 }
-                case 2: {
+                case 3: {
                     return TabbedFragment.newInstance(1);
                 }
-                case 3: {
+                case 4: {
                     return FinishFragment.newInstance();
                 }
                 default: {
@@ -168,7 +171,7 @@ public class PersonalizeActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             Log.d(TAG, "SectionsPagerAdapter -> getCount()");
-            return 4;
+            return 5;
         }
     }
 }

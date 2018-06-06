@@ -10,6 +10,11 @@
     <string name="title_activity_login">Sign in</string>
 
     <!-- Strings related to login -->
+    <string name="prompt_name">Name</string>
+    <string name="prompt_surname">Surname</string>
+    <string name="prompt_birthday">Birthday</string>
+    <string name="prompt_about">About</string>
+    <string name="prompt_range">Range</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in</string>
@@ -177,6 +182,10 @@
     <string name="swipe_fragment_message_swipe_match">If he/she swipes right as well, you are a match!</string>
     <string name="swipe_fragment_message_swipe_message">Only the ones that you have swiped right can send you messages</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
     <!-- strings related to password preference -->
     <string name="prompt_old_password">Old password</string>
     <string name="prompt_first_password">New password</string>
@@ -192,8 +201,35 @@
 
     <string name="pref_default_display_surname">Doe</string>
     <string name="pref_title_display_surname">Surname</string>
-  
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-  
+
+    <string name="fragment_inbox_search_hint">Search...</string>
+
+    <string name="fragment_profile_swiped_information">Swiped</string>
+    <string name="fragment_profile_matched_information">Matched</string>
+
+    <string name="fragment_profile_change_info_label">Change profile info</string>
+
+
+    <string name="user_profile_fragment_swipes_text_view">Swipes</string>
+    <string name="user_profile_fragment_matches_text_view">Matched</string>
+    <string name="user_profile_fragment_age_text_view">Age</string>
+
+    <string-array name="alert_dialog_fragment_profile_image_options">
+        <item>Delete photo</item>
+        <item>Set as profile pic</item>
+    </string-array>
+
+    <string name="alert_dialog_fragment_profile_delete_options_title">Are you sure?</string>
+    <string name="alert_dialog_fragment_profile_delete_options_yes">Yes</string>
+    <string name="alert_dialog_fragment_profile_delete_options_cancel">Cancel</string>
+
+    <string name="alert_dialog_fragment_profile_delete_success">Photo deleted</string>
+    <string name="alert_dialog_fragment_profile_delete_fail">Unavailable</string>
+
+    <string name="alert_dialog_fragment_profile_set_as_profile_success">Success</string>
+    <string name="alert_dialog_fragment_profile_set_as_profile_fail">Unavailable</string>
+
 </resources>
