@@ -157,6 +157,8 @@
     <string name="action_finish_personalizaion">Finish</string>
     <string name="personalize_finish">You have successfully finished personalizing your account. Press finish and start connecting to people around you!</string>
 
+    <!-- change ip accordingly -->
+    <string name="ipconfig">192.168.137.1:8080</string>
 
     <!-- strings related to register activity -->
     <string name="title_activity_register">Sign up</string>

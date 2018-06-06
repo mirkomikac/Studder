@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.studder.ChatActivity;
 import com.studder.NavigationActivity;
 import com.studder.R;
+import com.studder.database.schema.UserMatchTable;
 import com.studder.database.schema.UserTable;
 import com.studder.fragments.UserGaleryFragment;
 import com.studder.model.User;
@@ -78,6 +79,7 @@ public class InboxRowViewHolder extends RecyclerView.ViewHolder implements View.
 
         Log.d(TAG, "onClick(View) -> putting extra -> " + UserTable.Cols._ID + " " + mUser.getId());
         chatActivity.putExtra(UserTable.Cols._ID, mUser.getId());
+        chatActivity.putExtra(UserMatchTable.Cols._ID, mUser.getmUserMatch().getId());
 
         Log.d(TAG, "onClick(View) -> start ChatActivity");
         mContext.startActivity(chatActivity);

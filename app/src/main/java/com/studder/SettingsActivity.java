@@ -134,9 +134,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 // simple string representation.
                 preference.setSummary(stringValue);
             }
-
+            String ipConfig = context.getResources().getString(R.string.ipconfig);
             Ion.with(context)
-                    .load("http://10.0.2.2:8080/users/update")
+                    .load("POST","http://"+ipConfig+"/users/update")
+                    //.load("http://10.0.2.2:8080/users/update")
                     .setJsonObjectBody(user)
                     .asJsonObject()
                     .withResponse()
