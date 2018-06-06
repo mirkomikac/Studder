@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -31,7 +32,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.FirebaseInstanceIdService;
+import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+import com.koushikdutta.async.future.Future;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
@@ -39,42 +45,29 @@ import com.studder.adapters.ViewPagerAdapter;
 import com.studder.database.schema.UserTable;
 import com.studder.fragments.reusable.SliderFragment;
 import com.studder.fragments.reusable.SwipeFragment;
+import com.studder.model.User;
 import com.studder.sharedpreferconfiguration.SaveSharedPreferences;
 
 import java.util.List;
 
-/**
- * A login screen that offers login via email/password.
- */
 public class LoginActivity extends AppCompatActivity {
 
-    private static final String TAG = "LoginACtivity";
+    private static final String TAG = "LoginActivity";
 
     private static final int REQUEST_READ_CONTACTS = 0;
 
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
-
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
     private UserLoginTask mAuthTask = null;
 
-    // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
     private ViewPager viewPager;
     private int dotscount;
-    private ImageView[] dots;
-    private LinearLayout sliderDotsPanel;
     private Button signUpButton;
     private Button mEmailSignInButton;
 
     private SliderFragment mSliderFragment;
-    private boolean loginSuccessful;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,10 +77,9 @@ public class LoginActivity extends AppCompatActivity {
         //if he is send him to main panel, but authentication needs to be established(again login request to server)?
         //user/pw sharedpref vs sqlite
 
-
         String URL = "content://com.studder.Studder.UserProvider/users/";
 
-        ContentValues values = new ContentValues();
+        /*ContentValues values = new ContentValues();
         values.put(UserTable.Cols.USERNAME, "stfnvar@gmail.com");
         values.put(UserTable.Cols.PASSWORD, "stfnvar");
 
@@ -103,10 +95,11 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(this, c.getString(c.getColumnIndex(UserTable.Cols._ID)), Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "onCreate -> " + c.getString(c.getColumnIndex(UserTable.Cols.USERNAME)));
             } while (c.moveToNext());
-        }
+        }*/
 
 
         Log.d(TAG, "onCreate(Bundle)");
+        Log.d(TAG, FirebaseInstanceId.getInstance().getToken());
 
         if(SaveSharedPreferences.getLoggedIn(getApplicationContext())){
             Log.d(TAG, "onCreate(Bundle) : already logged in");
@@ -132,8 +125,6 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-        sliderDotsPanel = (LinearLayout) findViewById(R.id.SliderDots);
 
         mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
 
@@ -329,29 +320,31 @@ public class LoginActivity extends AppCompatActivity {
             JsonObject json = new JsonObject();
             json.addProperty("username", mEmail);
             json.addProperty("password", mPassword);
+            json.addProperty("userDeviceToken", FirebaseInstanceId.getInstance().getToken());
 
             Ion.with(getApplicationContext())
-                    .load("http://192.168.137.1:8080/auth/login")
+                    .load("http://10.0.2.2:8080/auth/login")
                     .setJsonObjectBody(json)
-                    .asJsonObject()
-                    .withResponse()
-                    .setCallback(new FutureCallback<Response<JsonObject>>() {
+                    .as(new TypeToken<User>() {}).withResponse()
+                    .setCallback(new FutureCallback<Response<User>>() {
                         @Override
-                        public void onCompleted(Exception e, Response<JsonObject> result) {
+                        public void onCompleted(Exception e, Response<User> result) {
                             if (result.getHeaders().code() == 200) {
 
-                                Log.d(TAG, "UserLoginTask -> doInBackground -> Ion Response == 200");
+                                Log.d(TAG, "UserLoginTask -> doInBackground -> Ion Response => User ID == " + result.getResult().getId().toString());
 
                                 Toast.makeText(LoginActivity.this, R.string.login_register_activity_success, Toast.LENGTH_SHORT);
 
                                 SaveSharedPreferences.setLoggedIn(getApplicationContext(), true);
+                                saveSharedPreferences(result.getResult());
+
                                 // Tim6 -> If First Time
                                 Intent personalizeActivity = new Intent(LoginActivity.this, PersonalizeActivity.class);
                                 startActivity(personalizeActivity);
 
                                 finish();
                             } else {
-                                Log.d(TAG, "UserLoginTask -> doInBackground -> Ion Response == " + result.getHeaders().code());
+                                Log.d(TAG, "UserLoginTask -> doInBackground -> Ion Response => User == null -> response code == " + result.getHeaders().code());
 
                                 showProgress(false);
 
@@ -362,8 +355,76 @@ public class LoginActivity extends AppCompatActivity {
                             }
                             mAuthTask = null;
                         }
+
+
                     });
             return true;
+        }
+
+        private void saveSharedPreferences(User user){
+            SharedPreferences pref = getApplicationContext().getSharedPreferences("USER_INFO", MODE_PRIVATE);
+            SharedPreferences.Editor editor = pref.edit();
+
+            Log.d(TAG, "saveSharedPreferenes(User) -> placing user info into shared preferences -> start");
+
+            if ((user.getId() != null)) {
+                editor.putInt(UserTable.Cols._ID, user.getId());
+            } else {
+                editor.putInt(UserTable.Cols._ID, -1);
+            }
+            if(user.getUsername() != null){
+                editor.putString(UserTable.Cols.USERNAME, user.getUsername());
+            } else {
+                editor.putString(UserTable.Cols.USERNAME, "-1");
+            }
+            if(user.getName() != null){
+                editor.putString(UserTable.Cols.NAME, user.getName());
+            } else {
+                editor.putString(UserTable.Cols.NAME, "-1");
+            }
+            if(user.getSurname() != null){
+                editor.putString(UserTable.Cols.SURNAME, user.getSurname());
+            } else {
+                editor.putString(UserTable.Cols.SURNAME, "-1");
+            }
+            if(user.getBirthday() != null){
+                editor.putString(UserTable.Cols.BIRTHDAY, user.getBirthday().toString());
+            } else {
+                editor.putString(UserTable.Cols.BIRTHDAY, "-1");
+            }
+            if(user.getDescription() != null){
+                editor.putString(UserTable.Cols.DESCRIPTION, user.getDescription());
+            } else {
+                editor.putString(UserTable.Cols.DESCRIPTION, "-1");
+            }
+            if(user.getUserGender() != null){
+                editor.putString(UserTable.Cols.USER_GENDER, user.getUserGender());
+            } else {
+                editor.putString(UserTable.Cols.USER_GENDER, "-1");
+            }
+            if(user.getRadius() != null){
+                editor.putInt(UserTable.Cols.RADIUS, user.getRadius());
+            } else {
+                editor.putInt(UserTable.Cols.RADIUS, -1);
+            }
+            if(user.getIsPrivate() != null){
+                editor.putBoolean(UserTable.Cols.IS_PRIVATE, user.getIsPrivate());
+            } else {
+                editor.putBoolean(UserTable.Cols.IS_PRIVATE, false);
+            }
+            if(user.getSwipeThrow() != null){
+                editor.putString(UserTable.Cols.SWIPE_THROW, user.getSwipeThrow());
+            } else {
+                editor.putString(UserTable.Cols.SWIPE_THROW, "-1");
+            }
+            if(user.getCity() != null){
+                editor.putString(UserTable.Cols.CITY, user.getCity());
+            } else{
+                editor.putString(UserTable.Cols.CITY, "-1");
+            }
+            editor.apply();
+
+            Log.d(TAG, "saveSharedPreferenes(User) -> placing user info into shared preferences -> success");
         }
 
         @Override

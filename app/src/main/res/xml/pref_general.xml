@@ -20,22 +20,52 @@
 
     <EditTextPreference
         android:capitalize="words"
+        android:defaultValue="@string/pref_default_display_surname"
+        android:inputType="textCapWords"
+        android:key="example_surname"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_display_surname" />
+
+    <!--<EditTextPreference
+        android:capitalize="words"
         android:defaultValue="@string/pref_default_display_email"
         android:inputType="textCapWords"
         android:key="example_email"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="@string/pref_title_display_email" />
+        android:title="@string/pref_title_display_email" /> -->
 
-    <EditTextPreference
+    <!--<EditTextPreference
         android:capitalize="words"
         android:inputType="textPassword"
         android:key="example_password"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="@string/pref_title_display_password" />
+        android:title="@string/pref_title_display_password" />-->
+
+   <!-- <Button
+        android:id="@+id/password_preference_button"
+        style="?android:textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp"
+        android:text="@string/prompt_password"
+        android:textStyle="bold" /> -->
+    <!--<Preference android:title="@string/prompt_password"
+        android:key="@string/passwordPreferenceButton"
+    /> -->
+
+    <com.studder.preferences.PasswordPreference
+        android:dialogTitle="Dialog Title"
+        android:key="password_key"
+        android:title="@string/prompt_password"
+        android:defaultValue="Pw..."
+        />
 
     <EditTextPreference
         android:capitalize="words"
@@ -58,13 +88,13 @@
 
     <EditTextPreference
         android:capitalize="words"
-        android:defaultValue="@string/pref_default_display_address"
+        android:defaultValue="@string/pref_default_display_city"
         android:inputType="text"
-        android:key="example_address"
+        android:key="example_city"
         android:maxLines="2"
         android:selectAllOnFocus="true"
         android:singleLine="false"
-        android:title="@string/pref_title_display_address" />
+        android:title="@string/pref_title_display_city" />
 
 
     <!-- LISTA.... NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
