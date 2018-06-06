@@ -100,10 +100,10 @@ public class NavigationActivity extends AppCompatActivity
             startActivity(settingsActivity);
             return true;
         } else if(id == R.id.action_logout){
-
+            String ipConfig = getResources().getString(R.string.ipconfig);
             // Tim6 -> Clear Data, Add Additional Options
             Ion.with(getApplicationContext())
-                    .load("http://10.0.2.2:8080/auth/logout")
+                    .load("http://"+ipConfig+"/auth/logout")
                     .asJsonObject()
                     .withResponse()
                     .setCallback(new FutureCallback<Response<JsonObject>>() {

@@ -57,6 +57,8 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                String ipConfig = getResources().getString(R.string.ipconfig);
+
                 Log.d(TAG, "mSignUpButton -> trigger::onClick");
 
                 if(validate()){
@@ -65,8 +67,8 @@ public class RegisterActivity extends AppCompatActivity {
 
                 JsonObject  json = mapToJson();
 
-                String url = "http://10.0.2.2:8080//users";
-                //String url = "http://192.168.137.1:8080//users";
+                String url = "http://"+ipConfig+"//users";
+
                 Ion.with(getApplicationContext())
                         .load(url)
                         .setJsonObjectBody(json)

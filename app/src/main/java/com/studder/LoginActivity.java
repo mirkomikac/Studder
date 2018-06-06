@@ -317,8 +317,10 @@ public class LoginActivity extends AppCompatActivity {
             json.addProperty("username", mEmail);
             json.addProperty("password", mPassword);
 
+            String ipConfig = getResources().getString(R.string.ipconfig);
+
             Ion.with(getApplicationContext())
-                    .load("http://10.0.2.2:8080/auth/login")
+                    .load("http://"+ipConfig+"/auth/login")
                     .setJsonObjectBody(json)
                     .as(new TypeToken<User>() {}).withResponse()
                     .setCallback(new FutureCallback<Response<User>>() {

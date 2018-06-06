@@ -129,9 +129,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 // simple string representation.
                 preference.setSummary(stringValue);
             }
-
+            String ipConfig = context.getResources().getString(R.string.ipconfig);
             Ion.with(context)
-                    .load("PUT","http://10.0.2.2:8080/users")
+                    .load("PUT","http://"+ipConfig+"/users")
                     .setJsonObjectBody(user)
                     .asJsonObject()
                     .withResponse()

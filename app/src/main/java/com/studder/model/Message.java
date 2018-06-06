@@ -1,57 +1,73 @@
 package com.studder.model;
 
+import java.util.Date;
+
 public class Message {
-    String message;
-    String userName;
-    String imageUri;
-    Long createdAt;
-    Long userId;
 
-    public Message(String message, String userName, String imageUri, Long createdAt, Long userId) {
-        this.message = message;
-        this.userName = userName;
-        this.imageUri = imageUri;
-        this.createdAt = createdAt;
-        this.userId = userId;
+    private Long id;
+    private String text;
+    private Date timeRecieved;
+    private String status;
+    private UserMatch match;
+    private User sender;
+
+    public Message(){
+
     }
 
-    public String getMessage() {
-        return message;
+    public Message(String text, Date timeRecieved, String status, UserMatch match, User sender) {
+        this.text = text;
+        this.timeRecieved = timeRecieved;
+        this.status = status;
+        this.match = match;
+        this.sender = sender;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public Date getTimeRecieved() {
+        return timeRecieved;
     }
 
-    public String getUserName() {
-        return userName;
+    public void setTimeRecieved(Date timeRecieved) {
+        this.timeRecieved = timeRecieved;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public Long getId() {
+        return id;
     }
 
-    public String getImageUri() {
-        return imageUri;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setImageUri(String imageUri) {
-        this.imageUri = imageUri;
+    public String getText() {
+        return text;
     }
 
-    public Long getCreatedAt() {
-        return createdAt;
+    public void setText(String text) {
+        this.text = text;
     }
 
-    public void setCreatedAt(Long createdAt) {
-        this.createdAt = createdAt;
+    public String getStatus() {
+        return status;
     }
 
-    public Long getUserId() {
-        return userId;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public UserMatch getMatch() {
+        return match;
+    }
+
+    public void setMatch(UserMatch match) {
+        this.match = match;
+    }
+
+    public User getSender() {
+        return sender;
+    }
+
+    public void setSender(User sender) {
+        this.sender = sender;
     }
 }

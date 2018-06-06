@@ -1,6 +1,7 @@
 package com.studder.adapters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.studder.R;
+import com.studder.database.schema.UserTable;
 import com.studder.model.Message;
 import com.studder.utils.ClientUtils;
 
@@ -39,14 +41,17 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     // Determines the appropriate ViewType according to the sender of the message.
     @Override
     public int getItemViewType(int position) {
+
+        SharedPreferences preferences = mContext.getSharedPreferences("USER_INFO", Context.MODE_PRIVATE);
+        final Integer loggedUserId = preferences.getInt(UserTable.Cols._ID, -1);
         Message message = (Message) mMessageList.get(position);
 
-        if(position > 0 && mMessageList.get(position - 1).getUserId() == mMessageList.get(position).getUserId() && mMessageList.get(position).getUserId() != 1L){
+        if(position > 0 && mMessageList.get(position - 1).getSender().getId() == mMessageList.get(position).getSender().getId() && mMessageList.get(position).getSender().getId() != loggedUserId){
             return VIEW_TYPE_MESSAGE_RECEIVED_AFTER;
         }
         //TODO logika iscrtavanja poruka
         //Proveriti prirodu poruke u odnosu na registrovanog usera.
-        if (message.getUserId().equals(1L)) {
+        if (message.getSender().getId().equals(loggedUserId)) {
             // If the current user is the sender of the message
             return VIEW_TYPE_MESSAGE_SENT;
         } else {
@@ -107,10 +112,10 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         }
 
         void bind(Message message) {
-            messageText.setText(message.getMessage());
+            messageText.setText(message.getText());
 
             // Format the stored timestamp into a readable String using method.
-            timeText.setText(ClientUtils.formatDateTime(message.getCreatedAt()));
+            timeText.setText(ClientUtils.formatDateTime(message.getTimeRecieved().getTime()));
         }
     }
 
@@ -128,12 +133,12 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         }
 
         void bind(Message message) {
-            messageText.setText(message.getMessage());
+            messageText.setText(message.getText());
 
             // Format the stored timestamp into a readable String using method.
-            timeText.setText(ClientUtils.formatDateTime(message.getCreatedAt()));
+            timeText.setText(ClientUtils.formatDateTime(message.getTimeRecieved().getTime()));
 
-            nameText.setText(message.getUserName());
+            nameText.setText(message.getSender().getUsername());
 
             // Insert the profile image from the URL into the ImageView.
             //Utils.displayRoundImageFromUrl(mContext, message.getImageUri(), profileImage);
