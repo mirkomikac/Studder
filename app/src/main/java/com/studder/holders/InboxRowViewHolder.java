@@ -2,11 +2,14 @@ package com.studder.holders;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -83,11 +86,31 @@ public class InboxRowViewHolder extends RecyclerView.ViewHolder implements View.
     public void bind(User user){
         Log.d(TAG, "bind(User) -> " + user.toString());
         mUserNameTextView.setText(user.getName() + " " + user.getSurname());
-        mUserLastMessageTextView.setText(user.getmUserMatch().getLastMessage());
-        mUserLastMessageTimeTextClock.setText(user.getmUserMatch().getLastMessageDate().toString());
+        if (user.getmUserMatch().getLastMessage() != null) {
+            mUserLastMessageTextView.setText(user.getmUserMatch().getLastMessage());
+        } else {
+            mUserLastMessageTextView.setText("Say HI!");
+        }
+        if(user.getmUserMatch().getLastMessageDate() != null){
+            mUserLastMessageTimeTextClock.setText(user.getmUserMatch().getLastMessageDate().toString());
+        } else {
+            mUserLastMessageTimeTextClock.setText("");
+        }
 
-        if(!user.getmUserMatch().getLastMessageSeen()){
+        if(user.getmUserMatch().getLastMessageSeen() != null){
+            if(!user.getmUserMatch().getLastMessageSeen()){
+                mUserLastMessageTextView.setTypeface(null, Typeface.BOLD | Typeface.ITALIC);
+            }
+        } else {
             mUserLastMessageTextView.setTypeface(null, Typeface.BOLD | Typeface.ITALIC);
+        }
+
+
+        if(user.getProfileImageEncoded() != null) {
+            byte[] bitmapBytes = Base64.decode(user.getProfileImageEncoded(), Base64.DEFAULT);
+            Bitmap bmp = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
+            bmp = bmp.createScaledBitmap(bmp, 350, 350, false);
+            mUserImageView.setImageBitmap(bmp);
         }
 
         mUser = user;

@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "581929999213",
+    "firebase_url": "https://studder-4f254.firebaseio.com",
+    "project_id": "studder-4f254",
+    "storage_bucket": "studder-4f254.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:581929999213:android:2da186e6a470e2c4",
+        "android_client_info": {
+          "package_name": "com.studder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "581929999213-sr2o1dpibui4op0k0k7785lr8deumlkb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.studder",
+            "certificate_hash": "4a3961fb123bfee0e0ae58291dbbcffdff392859"
+          }
+        },
+        {
+          "client_id": "581929999213-jo7vcaevoks6mcmjn7p872p13npkhrpn.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "581929999213-jo7vcaevoks6mcmjn7p872p13npkhrpn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1OGxWGvCsYPrwcd4CpdonwwBxSuBhQIk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "581929999213-jo7vcaevoks6mcmjn7p872p13npkhrpn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

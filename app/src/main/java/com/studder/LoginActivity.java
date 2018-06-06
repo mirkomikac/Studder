@@ -32,6 +32,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.FirebaseInstanceIdService;
+import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.koushikdutta.async.future.Future;
@@ -96,6 +99,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
         Log.d(TAG, "onCreate(Bundle)");
+        Log.d(TAG, FirebaseInstanceId.getInstance().getToken());
 
         if(SaveSharedPreferences.getLoggedIn(getApplicationContext())){
             Log.d(TAG, "onCreate(Bundle) : already logged in");
@@ -316,6 +320,7 @@ public class LoginActivity extends AppCompatActivity {
             JsonObject json = new JsonObject();
             json.addProperty("username", mEmail);
             json.addProperty("password", mPassword);
+            json.addProperty("userDeviceToken", FirebaseInstanceId.getInstance().getToken());
 
             Ion.with(getApplicationContext())
                     .load("http://10.0.2.2:8080/auth/login")
@@ -411,6 +416,11 @@ public class LoginActivity extends AppCompatActivity {
                 editor.putString(UserTable.Cols.SWIPE_THROW, user.getSwipeThrow());
             } else {
                 editor.putString(UserTable.Cols.SWIPE_THROW, "-1");
+            }
+            if(user.getCity() != null){
+                editor.putString(UserTable.Cols.CITY, user.getCity());
+            } else{
+                editor.putString(UserTable.Cols.CITY, "-1");
             }
             editor.apply();
 

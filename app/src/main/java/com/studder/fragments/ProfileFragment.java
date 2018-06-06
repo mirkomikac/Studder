@@ -1,6 +1,7 @@
 package com.studder.fragments;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,14 +16,18 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,11 +37,15 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
 import com.studder.R;
+import com.studder.SettingsActivity;
 import com.studder.database.schema.UserTable;
 import com.studder.holders.GalleryItemViewHolder;
 import com.studder.model.Media;
+import com.studder.model.Profile;
+import com.studder.utils.ImageUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProfileFragment extends Fragment {
@@ -46,6 +55,7 @@ public class ProfileFragment extends Fragment {
     private static final int REQUEST_CHOOSE_IMAGE = 1;
     private static final int REQUEST_TAKE_IMAGE = 2;
     private static final int REQUEST_READ_IMAGE_EXTERNAL_STORAGE = 3;
+    public static String IMAGE_PATH = "IMAGE_PATH";
 
     private ImageViewAdapeter mImageViewAdapter;
     private ImageRefreshTask mImageRefreshTask;
@@ -53,6 +63,10 @@ public class ProfileFragment extends Fragment {
     private TextView mNameSurnameTextView;
     private ImageButton mTakeImageNowImageButton;
     private ImageButton mChooseImageImageButton;
+    private ImageView mProfileImageView;
+    private Button mChangeProfileInfoButton;
+
+    private File mImageFile;
 
 
     public ProfileFragment() {
@@ -76,10 +90,45 @@ public class ProfileFragment extends Fragment {
         return intent;
     }
 
+    private Intent newCaptureImageIntent(){
+
+        Log.d(TAG, "newCaptureImageIntent()");
+
+        PackageManager packageManager = getActivity().getPackageManager();
+
+        Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        boolean canTakePhoto = (captureImage.resolveActivity(packageManager) != null);
+
+        mTakeImageNowImageButton.setEnabled(canTakePhoto);
+
+        if (canTakePhoto) {
+            Uri uri = FileProvider.getUriForFile(getContext(), getContext().getApplicationContext().getPackageName() + ".com.studder.provider", mImageFile);
+            captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+            Log.d(TAG, "newCaptureImageIntent : canTakePhoto == false");
+        }
+
+        return captureImage;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if((mImageFile == null) && (!mImageFile.exists())){
+            Uri uri = FileProvider.getUriForFile(getContext(), getContext().getApplicationContext().getPackageName() + ".com.studder.provider", mImageFile);
+            outState.putString(IMAGE_PATH, getImagePath(uri));
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {}
+        mImageFile = Profile.getPhotoFile(getActivity());
+
+        if((savedInstanceState != null) && (savedInstanceState.getString(IMAGE_PATH) != null)){
+            String path = savedInstanceState.getString(IMAGE_PATH);
+            mImageFile = new File(path);
+        }
     }
 
     @Override
@@ -96,6 +145,8 @@ public class ProfileFragment extends Fragment {
         mNameSurnameTextView = view.findViewById(R.id.text_view_fragment_profile_name_surname);
         mChooseImageImageButton = view.findViewById(R.id.image_button_fragment_profile_chose_photo);
         mTakeImageNowImageButton = view.findViewById(R.id.image_button_fragment_profile_take_photo_now);
+        mProfileImageView = view.findViewById(R.id.image_view_fragment_profile_profile_image);
+        mChangeProfileInfoButton = view.findViewById(R.id.button_fragment_profile_change_info);
 
         mNameSurnameTextView.setText(name + " " + surname);
 
@@ -110,8 +161,25 @@ public class ProfileFragment extends Fragment {
                             REQUEST_READ_IMAGE_EXTERNAL_STORAGE);
                 } else {
                     Intent chooserIntent = newImageSelectionIntent();
-                    startActivityForResult(Intent.createChooser(chooserIntent, "Select Image"), REQUEST_TAKE_IMAGE);
+                    startActivityForResult(Intent.createChooser(chooserIntent, "Select Image"), REQUEST_CHOOSE_IMAGE);
                 }
+            }
+        });
+
+        final Intent captureImageIntent = newCaptureImageIntent();
+
+        mTakeImageNowImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(captureImageIntent, REQUEST_TAKE_IMAGE);
+            }
+        });
+
+        mChangeProfileInfoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), SettingsActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -129,7 +197,7 @@ public class ProfileFragment extends Fragment {
 
             if(id != -1) {
                 Ion.with(getContext())
-                        .load("GET", "http://10.0.2.2:8080/media/" + id)
+                        .load("GET", "http://10.0.2.2:8080/media/me")
                         .as(new TypeToken<List<Media>>(){})
                         .withResponse()
                         .setCallback(new FutureCallback<Response<List<Media>>>() {
@@ -141,58 +209,46 @@ public class ProfileFragment extends Fragment {
                                     List<Media> media = result.getResult();
 
                                     for(int i =0;i < media.size();i++) {
-                                        byte[] bitmapBytes = Base64.decode(media.get(i).getPath(), Base64.DEFAULT);
+                                        byte[] bitmapBytes = Base64.decode(media.get(i).getEncodedImage(), Base64.DEFAULT);
                                         Bitmap bmp = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
-                                        bmp = bmp.createScaledBitmap(bmp, 200, 200, false);
-                                        media.get(i).setBitmap(BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length));
+                                        bmp = bmp.createScaledBitmap(bmp, 350, 350, false);
+                                        media.get(i).setBitmap(bmp);
                                     }
+                                    mImageViewAdapter = new ImageViewAdapeter(result.getResult());
+                                    GridLayoutManager glm = new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
 
-                                    ImageViewAdapeter imageAdapter = new ImageViewAdapeter(result.getResult());
-                                    GridLayoutManager glm = new GridLayoutManager(getContext(), 3);
-
+                                    mImageViewRecyclerView.setHasFixedSize(false);
                                     mImageViewRecyclerView.setLayoutManager(glm);
-
-                                    mImageViewRecyclerView.setAdapter(imageAdapter);
+                                    mImageViewRecyclerView.setAdapter(mImageViewAdapter);
                                 } else {
                                     Log.d(TAG, "ImageRefreshTask -> onCompleted -> code != 200");
                                 }
                             }
                         });
             }
+
+            Ion.with(getContext())
+                    .load("GET", "http://10.0.2.2:8080/media/getProfileImage")
+                    .as(new TypeToken<Media>(){})
+                    .withResponse()
+                    .setCallback(new FutureCallback<Response<Media>>() {
+                        @Override
+                        public void onCompleted(Exception e, Response<Media> result) {
+                            if(result.getHeaders().code() == 200){
+                                Log.d(TAG, "ImageRefreshTask  profile pic -> onCompleted -> code == 200");
+                                byte[] bitmapBytes = Base64.decode(result.getResult().getEncodedImage(), Base64.DEFAULT);
+                                Bitmap bmp = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
+                                bmp = bmp.createScaledBitmap(bmp, 350, 350, false);
+                                mProfileImageView.setImageBitmap(bmp);
+                            }
+                            else {
+                                Log.d(TAG, "ImageRefreshTask  profile pic -> onCompleted -> code != 200");
+                            }
+                        }
+                    });
+
             return null;
         }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (resultCode){
-            case REQUEST_CHOOSE_IMAGE: {
-                Uri uri = data.getData();
-                File newFile = new File(getImagePath(uri));
-                Ion.with(getContext())
-                        .load("https://10.0.2.2/media/someDescription")
-                        .setMultipartParameter("goop", "noop")
-                        .setMultipartFile("archive", "application/zip", newFile)
-                        .asJsonObject()
-                        .withResponse()
-                        .setCallback(new FutureCallback<Response<JsonObject>>() {
-                            @Override
-                            public void onCompleted(Exception e, Response<JsonObject> result) {
-                                if(result.getHeaders().code() == 200){
-                                    Toast.makeText(getContext(), R.string.login_register_activity_success, Toast.LENGTH_SHORT).show();
-                                } else{
-                                    Toast.makeText(getContext(), R.string.login_register_activity_fail, Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-            }
-            case REQUEST_TAKE_IMAGE: {
-
-            }
-        }
-
-
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -209,6 +265,49 @@ public class ProfileFragment extends Fragment {
                 startActivityForResult(Intent.createChooser(selectImage, "Select Photo"), REQUEST_CHOOSE_IMAGE);
             }
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(Activity.RESULT_OK == resultCode) {
+            switch (requestCode) {
+                case REQUEST_CHOOSE_IMAGE: {
+                    if (data != null) {
+                        Uri uri = data.getData();
+                        File newFile = new File(getImagePath(uri));
+                        uploadImage(newFile);
+                        break;
+                    }
+                }
+                case REQUEST_TAKE_IMAGE: {
+                    if ((mImageFile != null) && (mImageFile.exists())) {
+                        uploadImage(mImageFile);
+                        break;
+                    }
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void uploadImage(File newFile){
+        Ion.with(getContext())
+                .load("POST", "http://10.0.2.2:8080/media/upload/someDescription")
+                .setMultipartParameter("file", "file")
+                .setMultipartFile("file", "image/jpg", newFile)
+                .as(new TypeToken<Media>() {})
+                .withResponse()
+                .setCallback(new FutureCallback<Response<Media>>() {
+                    @Override
+                    public void onCompleted(Exception e, Response<Media> result) {
+                        if (result.getHeaders().code() == 200) {
+                            Toast.makeText(getContext(), R.string.login_register_activity_success, Toast.LENGTH_SHORT).show();
+                            refreshContent(null);
+                        } else {
+                            Toast.makeText(getContext(), R.string.login_register_activity_fail, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     private class ImageViewAdapeter extends RecyclerView.Adapter<GalleryItemViewHolder> {
@@ -229,7 +328,7 @@ public class ProfileFragment extends Fragment {
             View view = inflater.inflate(R.layout.gallery_image_item, parent, false);
 
             Log.d(TAG, "ImageViewAdapeter -> onCreateViewHolder(...) -> success");
-            return new GalleryItemViewHolder(view, getActivity());
+            return new GalleryItemViewHolder(view, getActivity(), ProfileFragment.this);
 
         }
 
@@ -242,6 +341,11 @@ public class ProfileFragment extends Fragment {
         @Override
         public int getItemCount() {
             return media.size();
+        }
+
+        public void updateDataSet(Media item){
+            this.media.add(item);
+            notifyItemInserted(this.media.indexOf(item));
         }
     }
 
@@ -265,5 +369,48 @@ public class ProfileFragment extends Fragment {
         Log.d(TAG, "getImagePath(Uri uri) : return == " + path);
 
         return path;
+    }
+
+    public void refreshContent(Bitmap bmp) {
+        super.onResume();
+        SharedPreferences pref = getContext().getSharedPreferences("USER_INFO", Context.MODE_PRIVATE);
+        Integer id = pref.getInt(UserTable.Cols._ID, -1);
+
+        if (id != -1) {
+            Ion.with(getContext())
+                    .load("GET", "http://10.0.2.2:8080/media/me")
+                    .as(new TypeToken<List<Media>>() {
+                    })
+                    .withResponse()
+                    .setCallback(new FutureCallback<Response<List<Media>>>() {
+                        @Override
+                        public void onCompleted(Exception e, Response<List<Media>> result) {
+                            if (result.getHeaders().code() == 200) {
+                                Log.d(TAG, "ImageRefreshTask -> onCompleted -> code == 200");
+
+                                List<Media> media = result.getResult();
+
+                                for (int i = 0; i < media.size(); i++) {
+                                    byte[] bitmapBytes = Base64.decode(media.get(i).getEncodedImage(), Base64.DEFAULT);
+                                    Bitmap bmp = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
+                                    bmp = bmp.createScaledBitmap(bmp, 350, 350, false);
+                                    media.get(i).setBitmap(bmp);
+                                }
+                                ImageViewAdapeter imageAdapter = new ImageViewAdapeter(result.getResult());
+                                GridLayoutManager glm = new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
+
+                                mImageViewRecyclerView.setLayoutManager(glm);
+                                mImageViewRecyclerView.setHasFixedSize(false);
+                                mImageViewRecyclerView.setAdapter(imageAdapter);
+                            } else {
+                                Log.d(TAG, "ImageRefreshTask -> onCompleted -> code != 200");
+                            }
+                        }
+                    });
+        }
+
+        if(bmp != null){
+            mProfileImageView.setImageBitmap(bmp);
+        }
     }
 }
