@@ -201,6 +201,11 @@
 
     <string name="fragment_profile_change_info_label">Change profile info</string>
 
+
+    <string name="user_profile_fragment_swipes_text_view">Swipes</string>
+    <string name="user_profile_fragment_matches_text_view">Matched</string>
+    <string name="user_profile_fragment_age_text_view">Age</string>
+
     <string-array name="alert_dialog_fragment_profile_image_options">
         <item>Delete photo</item>
         <item>Set as profile pic</item>
@@ -215,5 +220,6 @@
 
     <string name="alert_dialog_fragment_profile_set_as_profile_success">Success</string>
     <string name="alert_dialog_fragment_profile_set_as_profile_fail">Unavailable</string>
+
 
 </resources>

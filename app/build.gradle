@@ -33,6 +33,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.7'
 
     //
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
     implementation 'com.koushikdutta.ion:ion:2.+'
     implementation 'com.google.firebase:firebase-messaging:11.8.0'
     testImplementation 'junit:junit:4.12'
