@@ -85,6 +85,11 @@
             android:name=".database.schema.UserTable">
         </provider>
 
+        <provider
+            android:authorities="com.studder.Studder.MessageProvider"
+            android:name=".database.schema.MessageTable">
+        </provider>
+
     </application>
 
 </manifest>

@@ -29,6 +29,7 @@ import com.studder.model.Message;
 import com.studder.model.User;
 import com.studder.model.UserMatch;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -44,6 +45,8 @@ public class ChatActivity extends AppCompatActivity {
     private EditText editText;
     private LinearLayoutManager mLinearLayoutManager;
     private MessagesFetch mMessagesFetch;
+    private UserMatch userMatch;
+    private User loggedUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,14 +71,48 @@ public class ChatActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             Log.d(TAG, "MessagesFetch -> doInBackground -> start");
-            SharedPreferences preferences = getApplicationContext().getSharedPreferences("USER_INFO", Context.MODE_PRIVATE);
-            final Integer id = preferences.getInt(UserTable.Cols._ID, -1);
+
+            try {
+                    SharedPreferences preferences = getApplicationContext().getSharedPreferences("USER_INFO", Context.MODE_PRIVATE);
+                    final Integer id = preferences.getInt(UserTable.Cols._ID, -1);
+                    final String username = preferences.getString(UserTable.Cols.USERNAME, "");
+                    final String name = preferences.getString(UserTable.Cols.NAME, "");
+                    final String surname = preferences.getString(UserTable.Cols.SURNAME, "");
+                    final String birthday = preferences.getString(UserTable.Cols.BIRTHDAY, "");
+                    final String description = preferences.getString(UserTable.Cols.DESCRIPTION, "");
+                    final String userGender = preferences.getString(UserTable.Cols.USER_GENDER, "");
+                    final Integer radius = preferences.getInt(UserTable.Cols.RADIUS, -1);
+                    final String swipeThrow = preferences.getString(UserTable.Cols.SWIPE_THROW, "");
+                    final Boolean isPrivate = preferences.getBoolean(UserTable.Cols.IS_PRIVATE, true);
+                    loggedUser = new User();
+                    loggedUser.setId(id);
+                    loggedUser.setUsername(username);
+                    loggedUser.setName(name);
+                    loggedUser.setSurname(surname);
+                    loggedUser.setBirthday(new SimpleDateFormat("dd/MM/yyyy").parse(birthday));
+                    loggedUser.setDescription(description);
+                    loggedUser.setUserGender(userGender);
+                    loggedUser.setSwipeThrow(swipeThrow);
+                    loggedUser.setIsPrivate(isPrivate);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             Long participant2Id = getIntent().getLongExtra(UserTable.Cols._ID,-1);
             Long userMatchId = getIntent().getLongExtra(UserMatchTable.Cols._ID,-1);
 
-            if(participant2Id != -1){
+            if(userMatchId != -1){
                 String ipConfig = getResources().getString(R.string.ipconfig);
+                Ion.with(getApplicationContext())
+                        .load("http://"+ipConfig+"/matches/" + userMatchId)
+                        .as(new TypeToken<UserMatch>() {})
+                        .withResponse()
+                        .setCallback(new FutureCallback<Response<UserMatch>>() {
+                            @Override
+                            public void onCompleted(Exception e, Response<UserMatch> result) {
+                                userMatch = result.getResult();
+                            }
+                        });
                 Ion.with(getApplicationContext())
                         .load("http://"+ipConfig+"/messages/match/" + userMatchId)
                         .as(new TypeToken<List<Message>>() {})
@@ -104,9 +141,7 @@ public class ChatActivity extends AppCompatActivity {
                                     sendButton.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            User u = new User();
-                                            u.setId(id);
-                                            Message m = new Message( editText.getText().toString(),new Date(),"SENT",new UserMatch(),u);
+                                            Message m = new Message( editText.getText().toString(),new Date(),"SENT",userMatch,loggedUser);
                                             editText.setText("");
                                             mMessageAdapter.getMessageList().add(m);
                                             mMessageAdapter.notifyDataSetChanged();
@@ -124,5 +159,8 @@ public class ChatActivity extends AppCompatActivity {
 
             return true;
         }
+
     }
+
+
 }

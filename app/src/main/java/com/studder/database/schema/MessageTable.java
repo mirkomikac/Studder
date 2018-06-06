@@ -49,8 +49,6 @@ public final class MessageTable extends ContentProvider {
         public static final String SENDER_ID = "sender_id";
     }
 
-    private MessageTable(){}
-
     @Override
     public boolean onCreate() {
         StudderSQLiteOpenHelper helper = new StudderSQLiteOpenHelper(getContext());
