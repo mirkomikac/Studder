@@ -67,10 +67,22 @@ public class InboxRowViewHolder extends RecyclerView.ViewHolder implements View.
     public void bind(User user){
         Log.d(TAG, "bind(User) -> " + user.toString());
         mUserNameTextView.setText(user.getName() + " " + user.getSurname());
-        mUserLastMessageTextView.setText(user.getmUserMatch().getLastMessage());
-        mUserLastMessageTimeTextClock.setText(user.getmUserMatch().getLastMessageDate().toString());
+        if (user.getmUserMatch().getLastMessage() != null) {
+            mUserLastMessageTextView.setText(user.getmUserMatch().getLastMessage());
+        } else {
+            mUserLastMessageTextView.setText("Say HI!");
+        }
+        if(user.getmUserMatch().getLastMessageDate() != null){
+            mUserLastMessageTimeTextClock.setText(user.getmUserMatch().getLastMessageDate().toString());
+        } else {
+            mUserLastMessageTimeTextClock.setText("");
+        }
 
-        if(!user.getmUserMatch().getLastMessageSeen()){
+        if(user.getmUserMatch().getLastMessageSeen() != null){
+            if(!user.getmUserMatch().getLastMessageSeen()){
+                mUserLastMessageTextView.setTypeface(null, Typeface.BOLD | Typeface.ITALIC);
+            }
+        } else {
             mUserLastMessageTextView.setTypeface(null, Typeface.BOLD | Typeface.ITALIC);
         }
 

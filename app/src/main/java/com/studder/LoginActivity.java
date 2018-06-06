@@ -417,6 +417,11 @@ public class LoginActivity extends AppCompatActivity {
             } else {
                 editor.putString(UserTable.Cols.SWIPE_THROW, "-1");
             }
+            if(user.getCity() != null){
+                editor.putString(UserTable.Cols.CITY, user.getCity());
+            } else{
+                editor.putString(UserTable.Cols.CITY, "-1");
+            }
             editor.apply();
 
             Log.d(TAG, "saveSharedPreferenes(User) -> placing user info into shared preferences -> success");

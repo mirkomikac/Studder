@@ -28,7 +28,7 @@
         android:singleLine="true"
         android:title="@string/pref_title_display_surname" />
 
-    <EditTextPreference
+    <!--<EditTextPreference
         android:capitalize="words"
         android:defaultValue="@string/pref_default_display_email"
         android:inputType="textCapWords"
@@ -36,7 +36,7 @@
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="@string/pref_title_display_email" />
+        android:title="@string/pref_title_display_email" /> -->
 
     <!--<EditTextPreference
         android:capitalize="words"
