@@ -20,12 +20,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
 import com.studder.fragments.InboxFragment;
 import com.studder.fragments.ProfileFragment;
+import com.studder.model.User;
 import com.studder.sharedpreferconfiguration.SaveSharedPreferences;
 
 public class NavigationActivity extends AppCompatActivity
@@ -109,9 +112,12 @@ public class NavigationActivity extends AppCompatActivity
             return true;
         } else if(id == R.id.action_logout){
 
-            // Tim6 -> Clear Data, Add Additional Options
+            User u = new User();
+            u.setUserDeviceToken(FirebaseInstanceId.getInstance().getToken());
+
             Ion.with(getApplicationContext())
-                    .load("http://10.0.2.2:8080/auth/logout")
+                    .load("POST", "http://10.0.2.2:8080/auth/logout")
+                    .setJsonPojoBody(u)
                     .asJsonObject()
                     .withResponse()
                     .setCallback(new FutureCallback<Response<JsonObject>>() {

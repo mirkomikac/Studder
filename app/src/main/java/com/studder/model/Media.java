@@ -16,6 +16,7 @@ public class Media implements Serializable {
     private Boolean isPrivate;
     private User user;
     private Bitmap bitmap;
+    private String encodedImage;
 
     public Media() {
     }
@@ -90,6 +91,14 @@ public class Media implements Serializable {
 
     public void setBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
+    }
+
+    public String getEncodedImage() {
+        return encodedImage;
+    }
+
+    public void setEncodedImage(String encodedImage) {
+        this.encodedImage = encodedImage;
     }
 }
 

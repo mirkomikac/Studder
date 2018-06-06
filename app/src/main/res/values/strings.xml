@@ -200,4 +200,20 @@
     <string name="fragment_profile_matched_information">Matched</string>
 
     <string name="fragment_profile_change_info_label">Change profile info</string>
+
+    <string-array name="alert_dialog_fragment_profile_image_options">
+        <item>Delete photo</item>
+        <item>Set as profile pic</item>
+    </string-array>
+
+    <string name="alert_dialog_fragment_profile_delete_options_title">Are you sure?</string>
+    <string name="alert_dialog_fragment_profile_delete_options_yes">Yes</string>
+    <string name="alert_dialog_fragment_profile_delete_options_cancel">Cancel</string>
+
+    <string name="alert_dialog_fragment_profile_delete_success">Photo deleted</string>
+    <string name="alert_dialog_fragment_profile_delete_fail">Unavailable</string>
+
+    <string name="alert_dialog_fragment_profile_set_as_profile_success">Success</string>
+    <string name="alert_dialog_fragment_profile_set_as_profile_fail">Unavailable</string>
+
 </resources>

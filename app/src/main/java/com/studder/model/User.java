@@ -28,6 +28,8 @@ public class User implements Serializable {
     private String city;
 
     private UserMatch mUserMatch;
+    private String profileImageEncoded;
+    private String userDeviceToken;
 
     public User() {
     }
@@ -204,6 +206,21 @@ public class User implements Serializable {
         this.mUserMatch = mUserMatch;
     }
 
+    public String getProfileImageEncoded() {
+        return profileImageEncoded;
+    }
+
+    public void setProfileImageEncoded(String profileImageEncoded) {
+        this.profileImageEncoded = profileImageEncoded;
+    }
+
+    public String getUserDeviceToken() {
+        return userDeviceToken;
+    }
+
+    public void setUserDeviceToken(String userDeviceToken) {
+        this.userDeviceToken = userDeviceToken;
+    }
     public String getCity() {
         return city;
     }
