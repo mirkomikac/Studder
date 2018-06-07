@@ -8,7 +8,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +18,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
@@ -24,6 +27,7 @@ import com.studder.R;
 import com.studder.adapters.ImageAdapter;
 import com.studder.database.schema.UserTable;
 import com.studder.model.Media;
+import com.studder.model.User;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -41,6 +45,8 @@ import java.util.List;
  */
 public class UserGaleryFragment extends Fragment {
 
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+
     private OnFragmentInteractionListener mListener;
 
     private TextView nameTextView;
@@ -51,6 +57,8 @@ public class UserGaleryFragment extends Fragment {
     private TextView swipesTextView;
     private TextView matchesTextView;
     private ImageView profileImageView;
+    private TextView isOnlineTextView;
+    private TextView lastOnlineTextView;
 
     private LoadImagesTask loadImagesTask;
 
@@ -80,12 +88,16 @@ public class UserGaleryFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_user_galery, container, false);
 
-        SharedPreferences pref = getContext().getSharedPreferences("USER_INFO", Context.MODE_PRIVATE);
-        Long userId = 1L;
-        String name = pref.getString(UserTable.Cols.NAME, "Unknown");
-        String surname = pref.getString(UserTable.Cols.SURNAME, "Unknown");
-        String about = pref.getString(UserTable.Cols.DESCRIPTION, "Unknown");
-        String age = pref.getString(UserTable.Cols.BIRTHDAY, "Unknown");
+        Integer userId = getActivity().getIntent().getIntExtra("userId", 0);
+        String username = getActivity().getIntent().getStringExtra("userUsername");
+        String name = getActivity().getIntent().getStringExtra("userName");
+        String surname = getActivity().getIntent().getStringExtra("userSurname");
+        String about = getActivity().getIntent().getStringExtra("userDescription");
+        Date age = new Date(getActivity().getIntent().getLongExtra("userBirthday", 0L));
+
+        Boolean isPrivate = getActivity().getIntent().getBooleanExtra("userIsPrivate", false);
+        Date lastOnline = new Date(getActivity().getIntent().getLongExtra("userLastOnline", 0L));
+        Boolean onlineStatus = getActivity().getIntent().getBooleanExtra("userOnlineStatus", false);
 
         nameTextView = view.findViewById(R.id.user_profile_fragment_name_text_view);
         surnameTextView = view.findViewById(R.id.user_profile_fragment_surname_text_view);
@@ -95,11 +107,21 @@ public class UserGaleryFragment extends Fragment {
         swipesTextView = view.findViewById(R.id.user_profile_fragment_swipes_text_view);
         matchesTextView = view.findViewById(R.id.user_profile_fragment_matches_text_view);
         profileImageView = view.findViewById(R.id.user_profile_fragment_profile_image);
+        isOnlineTextView = view.findViewById(R.id.user_profile_fragment_is_online_text_view);
+        lastOnlineTextView = view.findViewById(R.id.user_profile_fragment_last_online_text_view);
 
         nameTextView.setText(name);
         surnameTextView.setText(surname);
         aboutTextView.setText(about);
-        //ageTextView.setText(calculateAge(age));
+        ageTextView.setText(calculateAge(age)+"");
+        lastOnlineTextView.setText(dateFormat.format(lastOnline));
+
+        if(onlineStatus) {
+            view.findViewById(R.id.user_profile_fragment_last_online_fixed_text_view).setVisibility(View.INVISIBLE);
+            lastOnlineTextView.setVisibility(View.INVISIBLE);
+        }else {
+            isOnlineTextView.setVisibility(View.INVISIBLE);
+        }
 
         loadImagesTask = new LoadImagesTask();
         loadImagesTask.execute(userId);
@@ -112,22 +134,16 @@ public class UserGaleryFragment extends Fragment {
         }
     }
 
-    private int calculateAge(String dateString) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    private int calculateAge(Date date) {
         Calendar calendar1 = Calendar.getInstance();
         Calendar calendar2 = Calendar.getInstance();
-        try {
-            Date date = simpleDateFormat.parse(dateString);
-            calendar1.setTime(date);
-            int diff = calendar2.get(Calendar.YEAR) - calendar1.get(Calendar.YEAR);
-            if (calendar1.get(Calendar.MONTH) > calendar2.get(Calendar.MONTH) || (calendar1.get(Calendar.MONTH)
-                    == calendar2.get(Calendar.MONTH) && calendar1.get(Calendar.DATE) > calendar2.get(Calendar.DATE))) {
-                diff--;
-            }
-            return diff;
-        } catch (ParseException e) {
-            return 0;
+        calendar1.setTime(date);
+        int diff = calendar2.get(Calendar.YEAR) - calendar1.get(Calendar.YEAR);
+        if (calendar1.get(Calendar.MONTH) > calendar2.get(Calendar.MONTH) || (calendar1.get(Calendar.MONTH)
+                == calendar2.get(Calendar.MONTH) && calendar1.get(Calendar.DATE) > calendar2.get(Calendar.DATE))) {
+            diff--;
         }
+        return diff;
     }
 
 
@@ -156,21 +172,23 @@ public class UserGaleryFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    private class LoadImagesTask extends AsyncTask<Long, Void, Void> {
+    private class LoadImagesTask extends AsyncTask<Integer, Void, List<Media>> {
 
         @Override
-        protected Void doInBackground(Long... userId) {
+        protected List<Media> doInBackground(Integer... userId) {
+
             Ion.with(getContext())
-                    .load("GET", "http://10.0.2.2:8080/media/" + userId)
+                    .load("GET", "http://192.168.0.104:8080/media/" + userId)
                     .as(new TypeToken<List<Media>>(){})
                     .withResponse()
                     .setCallback(new FutureCallback<Response<List<Media>>>() {
                         @Override
                         public void onCompleted(Exception e, Response<List<Media>> result) {
                             if(result.getHeaders().code() == 200){
+
                                 List<Media> media = result.getResult();
 
-                                for(int i =0;i < media.size();i++) {
+                                for(int i = 0; i < media.size(); i++) {
                                     byte[] bitmapBytes = Base64.decode(media.get(i).getPath(), Base64.DEFAULT);
                                     Bitmap bmp = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
                                     bmp = bmp.createScaledBitmap(bmp, 200, 200, false);
