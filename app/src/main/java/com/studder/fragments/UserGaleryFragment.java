@@ -177,8 +177,10 @@ public class UserGaleryFragment extends Fragment {
         @Override
         protected List<Media> doInBackground(Integer... userId) {
 
+            Integer id = userId[0];
+
             Ion.with(getContext())
-                    .load("GET", "http://192.168.0.104:8080/media/" + userId)
+                    .load("GET", "http://192.168.0.104:8080/media/" + id)
                     .as(new TypeToken<List<Media>>(){})
                     .withResponse()
                     .setCallback(new FutureCallback<Response<List<Media>>>() {
