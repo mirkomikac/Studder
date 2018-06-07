@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.studder.ChatActivity;
 import com.studder.NavigationActivity;
+import com.studder.ProfileActivity;
 import com.studder.R;
 import com.studder.database.schema.UserMatchTable;
 import com.studder.database.schema.UserTable;
@@ -60,13 +61,17 @@ public class InboxRowViewHolder extends RecyclerView.ViewHolder implements View.
         mUserImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment userGalleryFragment = UserGaleryFragment.newInstance();
-
-                FragmentManager fragmentManager = ((NavigationActivity) context).getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.image_view_chat_box_row_user_image, userGalleryFragment);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
+                Intent profileActivity = new Intent(mContext, ProfileActivity.class);
+                profileActivity.putExtra("userId", mUser.getId());
+                profileActivity.putExtra("userUsername", mUser.getUsername());
+                profileActivity.putExtra("userName", mUser.getName());
+                profileActivity.putExtra("userSurname", mUser.getSurname());
+                profileActivity.putExtra("userDescription", mUser.getDescription());
+                profileActivity.putExtra("userBirthday", mUser.getBirthday().getTime());
+                profileActivity.putExtra("userIsPrivate", mUser.getIsPrivate());
+                profileActivity.putExtra("userLastOnline", mUser.getLastOnline().getTime());
+                profileActivity.putExtra("userOnlineStatus", mUser.getOnlineStatus());
+                mContext.startActivity(profileActivity);
             }
         });
 

@@ -202,9 +202,6 @@
     <string name="pref_default_display_surname">Doe</string>
     <string name="pref_title_display_surname">Surname</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
     <string name="fragment_inbox_search_hint">Search...</string>
 
     <string name="fragment_profile_swiped_information">Swiped</string>
@@ -231,5 +228,8 @@
 
     <string name="alert_dialog_fragment_profile_set_as_profile_success">Success</string>
     <string name="alert_dialog_fragment_profile_set_as_profile_fail">Unavailable</string>
+
+    <string name="user_profile_fragment_last_online">Last online:</string>
+    <string name="title_activity_profile">ProfileActivity</string>
 
 </resources>

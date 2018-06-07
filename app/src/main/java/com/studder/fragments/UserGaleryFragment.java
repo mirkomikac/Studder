@@ -189,7 +189,7 @@ public class UserGaleryFragment extends Fragment {
                                 List<Media> media = result.getResult();
 
                                 for(int i = 0; i < media.size(); i++) {
-                                    byte[] bitmapBytes = Base64.decode(media.get(i).getPath(), Base64.DEFAULT);
+                                    byte[] bitmapBytes = Base64.decode(media.get(i).getEncodedImage(), Base64.DEFAULT);
                                     Bitmap bmp = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
                                     bmp = bmp.createScaledBitmap(bmp, 200, 200, false);
                                     media.get(i).setBitmap(BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length));
