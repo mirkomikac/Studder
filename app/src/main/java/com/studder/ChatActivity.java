@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
@@ -98,13 +99,12 @@ public class ChatActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            Long participant2Id = getIntent().getLongExtra(UserTable.Cols._ID,-1);
-            Long userMatchId = getIntent().getLongExtra(UserMatchTable.Cols._ID,-1);
+            final Long userMatchId = getIntent().getLongExtra(UserMatchTable.Cols._ID,-1);
 
             if(userMatchId != -1){
-                String ipConfig = getResources().getString(R.string.ipconfig);
+                final String ipConfig = getResources().getString(R.string.ipconfig);
                 Ion.with(getApplicationContext())
-                        .load("http://"+ipConfig+"/matches/" + userMatchId)
+                        .load("GET","http://"+ipConfig+"/matches/" + userMatchId)
                         .as(new TypeToken<UserMatch>() {})
                         .withResponse()
                         .setCallback(new FutureCallback<Response<UserMatch>>() {
@@ -114,7 +114,7 @@ public class ChatActivity extends AppCompatActivity {
                             }
                         });
                 Ion.with(getApplicationContext())
-                        .load("http://"+ipConfig+"/messages/match/" + userMatchId)
+                        .load("GET","http://"+ipConfig+"/messages/match/" + userMatchId)
                         .as(new TypeToken<List<Message>>() {})
                         .withResponse()
                         .setCallback(new FutureCallback<Response<List<Message>>>() {
@@ -142,6 +142,22 @@ public class ChatActivity extends AppCompatActivity {
                                         @Override
                                         public void onClick(View v) {
                                             Message m = new Message( editText.getText().toString(),new Date(),"SENT",userMatch,loggedUser);
+                                            JsonObject json = mapToJson(m);
+                                            Ion.with(getApplicationContext())
+                                                    .load("POST","http://"+ipConfig+"/messages/" + userMatchId)
+                                                    .setJsonObjectBody(json)
+                                                    .asJsonObject()
+                                                    .withResponse()
+                                                    .setCallback(new FutureCallback<Response<JsonObject>>() {
+                                                        @Override
+                                                        public void onCompleted(Exception e, Response<JsonObject>  result) {
+                                                            if(result.getHeaders().code() == 200){
+                                                                Log.d(TAG, "code == 200");
+                                                            } else {
+                                                                Log.d(TAG, "code != 200");
+                                                            }
+                                                        }
+                                                    });
                                             editText.setText("");
                                             mMessageAdapter.getMessageList().add(m);
                                             mMessageAdapter.notifyDataSetChanged();
@@ -158,6 +174,20 @@ public class ChatActivity extends AppCompatActivity {
             }
 
             return true;
+        }
+
+        private JsonObject mapToJson(Message m){
+            Log.d(TAG, "mapToJson()");;
+
+            JsonObject  json = new JsonObject ();
+
+            json.addProperty("text", m.getText());
+            json.addProperty("timeRecieved",Long.toString(m.getTimeRecieved().getTime()) );
+            json.addProperty("status", m.getStatus());
+
+            Log.d(TAG, "mapToJson() -> return == " + json);
+
+            return json;
         }
 
     }

@@ -2,19 +2,30 @@ package com.studder.firebase;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
+import android.util.Base64;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.studder.ChatActivity;
 import com.studder.R;
+import com.studder.database.schema.UserMatchTable;
+import com.studder.database.schema.UserTable;
+import com.studder.model.Media;
 
 import java.util.Random;
+
+import static android.util.Base64.*;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -40,17 +51,40 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, ADMIN_CHANNEL_ID);
 
-        notificationBuilder.setSmallIcon(R.drawable.ic_notifications_black_24dp)
-                .setContentTitle(remoteMessage.getData().get("title"))
-                .setContentText(remoteMessage.getData().get("message"))
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri);
+        if(remoteMessage.getData().get("message") != null){
+            /*byte[] bitmapBytes = decode(remoteMessage.getData().get("image"), DEFAULT);
+            Bitmap bmp = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
+            bmp = bmp.createScaledBitmap(bmp, 100, 100, false);*/
 
-        mNotificationManager.notify(notificationId, notificationBuilder.build());
+            Intent chatActivityIntent = new Intent(getApplicationContext(), ChatActivity.class);
+            chatActivityIntent.putExtra(UserMatchTable.Cols._ID, remoteMessage.getData().get("matchId"));
+            chatActivityIntent.putExtra(UserTable.Cols._ID, remoteMessage.getData().get("userId"));
 
-        NotificationManager notif = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notif.notify(notificationId, notificationBuilder.build());
+            PendingIntent pendingIntent=PendingIntent.getActivity(getApplicationContext(),0,chatActivityIntent,0);
 
+            notificationBuilder.setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                    .setContentTitle(remoteMessage.getData().get("title"))
+                    .setContentText(remoteMessage.getData().get("message"))
+                    .addAction(-1,"Reply",pendingIntent)
+                    .setAutoCancel(true)
+                    .setSound(defaultSoundUri);
+
+            mNotificationManager.notify(notificationId, notificationBuilder.build());
+
+            NotificationManager notif = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notif.notify(notificationId, notificationBuilder.build());
+        } else {
+            notificationBuilder.setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                    .setContentTitle(remoteMessage.getData().get("title"))
+                    .setContentText(remoteMessage.getData().get("message"))
+                    .setAutoCancel(true)
+                    .setSound(defaultSoundUri);
+
+            mNotificationManager.notify(notificationId, notificationBuilder.build());
+
+            NotificationManager notif = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notif.notify(notificationId, notificationBuilder.build());
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
