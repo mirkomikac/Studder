@@ -107,9 +107,10 @@ public class InboxFragment extends Fragment {
         SharedPreferences preferences = getActivity().getApplicationContext().getSharedPreferences("USER_INFO", Context.MODE_PRIVATE);
         final Integer id = preferences.getInt(UserTable.Cols._ID, -1);
         final String searchParam = name;
+        String ipConfig = getContext().getResources().getString(R.string.ipconfig);
         if(id != -1) {
             Ion.with(getContext())
-                    .load("http://10.0.2.2:8080/matches/getMatchesMe")
+                    .load("http://"+ipConfig+"/matches/getMatchesMe")
                     .as(new TypeToken<List<UserMatch>>() {})
                     .withResponse()
                     .setCallback(new FutureCallback<Response<List<UserMatch>>>() {

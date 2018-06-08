@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "581929999213-hfi4k1133d45jdt6j1e6l6pd4l2qq98n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.studder",
+            "certificate_hash": "64803e4e94299dd3d1da455b881e45a774d2c6f0"
+          }
+        },
+        {
           "client_id": "581929999213-sr2o1dpibui4op0k0k7785lr8deumlkb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

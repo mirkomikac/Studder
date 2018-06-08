@@ -194,10 +194,10 @@ public class ProfileFragment extends Fragment {
 
             SharedPreferences pref = getContext().getSharedPreferences("USER_INFO", Context.MODE_PRIVATE);
             Integer id = pref.getInt(UserTable.Cols._ID, -1);
-
+            String ipConfig = getResources().getString(R.string.ipconfig);
             if(id != -1) {
                 Ion.with(getContext())
-                        .load("GET", "http://10.0.2.2:8080/media/me")
+                        .load("GET", "http://"+ipConfig+"/media/me")
                         .as(new TypeToken<List<Media>>(){})
                         .withResponse()
                         .setCallback(new FutureCallback<Response<List<Media>>>() {
@@ -228,7 +228,7 @@ public class ProfileFragment extends Fragment {
             }
 
             Ion.with(getContext())
-                    .load("GET", "http://10.0.2.2:8080/media/getProfileImage")
+                    .load("GET", "http://"+ipConfig+"/media/getProfileImage")
                     .as(new TypeToken<Media>(){})
                     .withResponse()
                     .setCallback(new FutureCallback<Response<Media>>() {
@@ -291,8 +291,9 @@ public class ProfileFragment extends Fragment {
     }
 
     private void uploadImage(File newFile){
+        String ipConfig = getResources().getString(R.string.ipconfig);
         Ion.with(getContext())
-                .load("POST", "http://10.0.2.2:8080/media/upload/someDescription")
+                .load("POST", "http://"+ipConfig+"/media/upload/someDescription")
                 .setMultipartParameter("file", "file")
                 .setMultipartFile("file", "image/jpg", newFile)
                 .as(new TypeToken<Media>() {})
@@ -375,10 +376,10 @@ public class ProfileFragment extends Fragment {
         super.onResume();
         SharedPreferences pref = getContext().getSharedPreferences("USER_INFO", Context.MODE_PRIVATE);
         Integer id = pref.getInt(UserTable.Cols._ID, -1);
-
+        String ipConfig = getResources().getString(R.string.ipconfig);
         if (id != -1) {
             Ion.with(getContext())
-                    .load("GET", "http://10.0.2.2:8080/media/me")
+                    .load("GET", "http://"+ipConfig+"/media/me")
                     .as(new TypeToken<List<Media>>() {
                     })
                     .withResponse()

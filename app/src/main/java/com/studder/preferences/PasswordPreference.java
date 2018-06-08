@@ -55,9 +55,9 @@ public class PasswordPreference extends DialogPreference {
                 json.addProperty("username", username);
                 json.addProperty("password", oldPw);
                 json.addProperty("newPw", newFirstPw);
-
+                String ipConfig = getContext().getResources().getString(R.string.ipconfig);
                 Ion.with(getContext())
-                        .load("http://10.0.2.2:8080/users/update")
+                        .load("http://"+ipConfig+"/users/update")
                         .setJsonObjectBody(json)
                         .asString()
                         .withResponse()

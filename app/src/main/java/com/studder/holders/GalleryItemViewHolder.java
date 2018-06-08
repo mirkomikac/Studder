@@ -79,7 +79,7 @@ public class GalleryItemViewHolder extends RecyclerView.ViewHolder implements Vi
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(mContext, android.R.layout.select_dialog_item);
         String[] options = mContext.getResources().getStringArray(R.array.alert_dialog_fragment_profile_image_options);
         arrayAdapter.addAll(options);
-
+        final String ipConfig = mContext.getResources().getString(R.string.ipconfig);
         builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -97,7 +97,7 @@ public class GalleryItemViewHolder extends RecyclerView.ViewHolder implements Vi
                                     @Override
                                     public void onClick(DialogInterface dialog,int which) {
                                         Log.d(TAG, "GalleryItemViewHolder(...) -> long click " + mMedia.getId());
-                                        Ion.with(mContext).load("DELETE", "http://10.0.2.2:8080/media/delete/" + mMedia.getId())
+                                        Ion.with(mContext).load("DELETE", "http://"+ipConfig+"/media/delete/" + mMedia.getId())
                                                 .setJsonPojoBody(mMedia)
                                                 .asJsonObject()
                                                 .withResponse()
@@ -134,7 +134,7 @@ public class GalleryItemViewHolder extends RecyclerView.ViewHolder implements Vi
                                 .setPositiveButton(mContext.getResources().getString(R.string.alert_dialog_fragment_profile_delete_options_yes), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog,int which) {
-                                        Ion.with(mContext).load("POST", "http://10.0.2.2:8080/media/setProfileImage/" + mMedia.getId())
+                                        Ion.with(mContext).load("POST", "http://"+ipConfig+"/media/setProfileImage/" + mMedia.getId())
                                                 .asJsonObject()
                                                 .withResponse()
                                                 .setCallback(new FutureCallback<Response<JsonObject>>() {

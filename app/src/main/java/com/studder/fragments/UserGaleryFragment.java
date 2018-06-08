@@ -178,9 +178,9 @@ public class UserGaleryFragment extends Fragment {
         protected List<Media> doInBackground(Integer... userId) {
 
             Integer id = userId[0];
-
+            String ipConfig = getResources().getString(R.string.ipconfig);
             Ion.with(getContext())
-                    .load("GET", "http://192.168.0.104:8080/media/" + id)
+                    .load("GET", "http://"+ipConfig+"/media/" + id)
                     .as(new TypeToken<List<Media>>(){})
                     .withResponse()
                     .setCallback(new FutureCallback<Response<List<Media>>>() {

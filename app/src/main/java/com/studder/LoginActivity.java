@@ -48,6 +48,7 @@ import com.studder.fragments.reusable.SwipeFragment;
 import com.studder.model.User;
 import com.studder.sharedpreferconfiguration.SaveSharedPreferences;
 
+import java.io.IOException;
 import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
@@ -99,7 +100,11 @@ public class LoginActivity extends AppCompatActivity {
 
 
         Log.d(TAG, "onCreate(Bundle)");
-        Log.d(TAG, FirebaseInstanceId.getInstance().getToken());
+        try {
+            Log.d(TAG, FirebaseInstanceId.getInstance().getToken("581929999213", "FCM"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         if(SaveSharedPreferences.getLoggedIn(getApplicationContext())){
             Log.d(TAG, "onCreate(Bundle) : already logged in");
