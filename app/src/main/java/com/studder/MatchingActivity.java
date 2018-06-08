@@ -1,9 +1,12 @@
 package com.studder;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 
@@ -15,6 +18,7 @@ import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
 import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
+import com.studder.model.Media;
 import com.studder.model.Profile;
 import com.studder.model.StudderCard;
 import com.studder.model.User;
@@ -48,6 +52,9 @@ public class MatchingActivity extends AppCompatActivity {
                         .setSwipeInMsgLayoutId(R.layout.swipe_accept)
                         .setSwipeOutMsgLayoutId(R.layout.swipe_reject));
         String ipConfig = getResources().getString(R.string.ipconfig);
+        //slika
+        //"https://pbs.twimg.com/profile_images/572905100960485376/GK09QnNG.jpeg"
+
         Ion.with(context)
                 .load("http://"+ipConfig+"/users/getForSwipping")
                 .as(new TypeToken<List<User>>() {})
@@ -60,7 +67,10 @@ public class MatchingActivity extends AppCompatActivity {
                             ArrayList<User> users = (ArrayList<User>) result.getResult();
                             //profile image
                             for(User u : users){
-                                Profile profile = new Profile(u.getId(), u.getName(), "https://pbs.twimg.com/profile_images/572905100960485376/GK09QnNG.jpeg", 20, u.getCity());
+                                byte[] bitmapBytes = Base64.decode(u.getProfileImageEncoded(), Base64.DEFAULT);
+                                //Bitmap bmp = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
+                                //bmp = bmp.createScaledBitmap(bmp, 350, 350, false);
+                                Profile profile = new Profile(u.getId(), u.getName(), u.getProfileImageEncoded(), 20, u.getCity(), bitmapBytes);
                                 profiles.add(profile);
                             }
                             //setting next person....

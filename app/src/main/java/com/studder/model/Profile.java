@@ -1,6 +1,7 @@
 package com.studder.model;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Environment;
 
 import com.google.gson.annotations.Expose;
@@ -24,12 +25,15 @@ public class Profile {
 
     private String profileImageFilename;
 
-    public Profile(int id, String name, String imageUri, Integer age, String location) {
+    private byte [] profileImgBitmap;
+
+    public Profile(int id, String name, String imageUri, Integer age, String location, byte[] profileImgBitmap) {
         this.id = id;
         this.name = name;
         this.imageUri = imageUri;
         this.age = age;
         this.location = location;
+        this.profileImgBitmap = profileImgBitmap;
     }
 
     public String getName() {
@@ -82,5 +86,9 @@ public class Profile {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public byte[] getProfileImgBitmap() {
+        return profileImgBitmap;
     }
 }

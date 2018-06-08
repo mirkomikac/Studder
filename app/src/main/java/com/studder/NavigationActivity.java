@@ -1,5 +1,6 @@
 package com.studder;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -15,10 +16,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.JsonObject;
@@ -39,10 +42,13 @@ public class NavigationActivity extends AppCompatActivity
     private FloatingActionButton matchingButton;
     private ViewPager mFragmentVewPager;
 
+    private TextView usernameTV;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Log.d(TAG, "onCreate(Bunlde) -> start");
 
         setContentView(R.layout.activity_navigation);
@@ -66,6 +72,7 @@ public class NavigationActivity extends AppCompatActivity
 
         mFragmentVewPager.setAdapter(spa);
         Log.d(TAG, "onCreate(Bunlde) -> added SwipePagerAdapter -> ViewPager");
+
 
         matchingButton = (FloatingActionButton) findViewById(R.id.fab);
         matchingButton.setOnClickListener(new View.OnClickListener(){
@@ -149,6 +156,7 @@ public class NavigationActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+
         if (id == R.id.nav_match) {
             Intent matchActivity = new Intent(this, MatchingActivity.class);
             startActivity(matchActivity);
@@ -168,10 +176,11 @@ public class NavigationActivity extends AppCompatActivity
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        usernameTV = findViewById(R.id.textView123);
+
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
 
     private class SwipePagerAdapter extends FragmentPagerAdapter{
 
