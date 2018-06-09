@@ -9,8 +9,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
@@ -26,6 +25,7 @@
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -63,8 +63,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.studder.LoginActivity" />
         </activity>
-        <activity
-            android:name=".MatchingActivity">
+        <activity android:name=".MatchingActivity">
             aandroid:label="@string/title_activity_matching"
             android:parentActivityName=".NavigationActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -76,8 +75,13 @@
             android:name=".ProfileActivity"
             android:label="@string/title_activity_profile"
             android:parentActivityName=".NavigationActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <activity
+            android:name=".MediaPreviewActivity"
+            android:label="@string/title_activity_media_preview"
+            android:parentActivityName=".ProfileActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -86,30 +90,23 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
-
         <provider
-            android:authorities="com.studder.Studder.UserProvider"
-            android:name=".database.schema.UserTable">
-        </provider>
-
+            android:name=".database.schema.UserTable"
+            android:authorities="com.studder.Studder.UserProvider"></provider>
         <provider
-            android:authorities="com.studder.Studder.MessageProvider"
-            android:name=".database.schema.MessageTable">
-        </provider>
+            android:name=".database.schema.MessageTable"
+            android:authorities="com.studder.Studder.MessageProvider"></provider>
 
-        <service
-            android:name=".firebase.MyFirebaseInstanceIdService">
+        <service android:name=".firebase.MyFirebaseInstanceIdService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-
-        <service
-            android:name=".firebase.MyFirebaseMessagingService">
+        <service android:name=".firebase.MyFirebaseMessagingService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 

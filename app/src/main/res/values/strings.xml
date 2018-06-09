@@ -158,7 +158,7 @@
     <string name="personalize_finish">You have successfully finished personalizing your account. Press finish and start connecting to people around you!</string>
 
     <!-- change ip accordingly -->
-    <string name="ipconfig">192.168.137.1:8080</string>
+    <string name="ipconfig">192.168.0.4:8080</string>
 
     <!-- strings related to register activity -->
     <string name="title_activity_register">Sign up</string>
@@ -230,6 +230,8 @@
     <string name="alert_dialog_fragment_profile_set_as_profile_fail">Unavailable</string>
 
     <string name="user_profile_fragment_last_online">Last online:</string>
+    <string name="user_profile_fragment_currently_online_text_view">Currently online</string>
     <string name="title_activity_profile">ProfileActivity</string>
+    <string name="title_activity_media_preview">MediaPreviewActivity</string>
 
 </resources>
