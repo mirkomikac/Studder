@@ -27,6 +27,9 @@ public class User implements Serializable {
     private String swipeThrow;
     private String city;
 
+    private Boolean firstTimeLogin;
+    private Boolean firstTIme;
+
     private UserMatch mUserMatch;
     private String profileImageEncoded;
     private String userDeviceToken;
@@ -227,5 +230,21 @@ public class User implements Serializable {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public Boolean getFirstTimeLogin() {
+        return firstTimeLogin;
+    }
+
+    public void setFirstTimeLogin(Boolean firstTimeLogin) {
+        this.firstTimeLogin = firstTimeLogin;
+    }
+
+    public Boolean getFirstTIme() {
+        return firstTIme;
+    }
+
+    public void setFirstTIme(Boolean firstTIme) {
+        this.firstTIme = firstTIme;
     }
 }

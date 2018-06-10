@@ -19,6 +19,7 @@ import com.studder.fragments.personalization.ImageDescriptionFragment;
 import com.studder.fragments.personalization.PersonalizeFragment;
 import com.studder.fragments.personalization.TabbedFragment;
 import com.studder.fragments.personalization.UserInfoFragment;
+import com.studder.sharedpreferconfiguration.SaveSharedPreferences;
 
 public class PersonalizeActivity extends AppCompatActivity {
 
@@ -66,6 +67,7 @@ public class PersonalizeActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
+        SaveSharedPreferences.setFirstTimeLogin(getApplicationContext(), false);
 
     }
 

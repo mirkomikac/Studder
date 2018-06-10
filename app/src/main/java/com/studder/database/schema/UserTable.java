@@ -58,6 +58,8 @@ public final class UserTable extends ContentProvider{
         public static final String USER_GENDER = "user_gender";
         public static final String SWIPE_THROW = "swipe_throw";
         public static final String CITY = "city";
+        public static final String FIRST_TIME_LOGIN = "first_time_login";
+        public static final String FIRST_TIME = "first_time";
     }
 
     @Override
