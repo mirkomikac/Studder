@@ -15,7 +15,9 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.profile_activity_toolbar);
+        toolbar.setTitle(getIntent().getStringExtra("userUsername"));
+
         setSupportActionBar(toolbar);
 
         launchProfileFragment();
@@ -31,7 +33,7 @@ public class ProfileActivity extends AppCompatActivity {
         bundle.putString("userDescription", getIntent().getStringExtra("userDescription"));
         bundle.putLong("userBirthday", getIntent().getLongExtra("userBirthday", 0L));
         bundle.putBoolean("userIsPrivate", getIntent().getBooleanExtra("userIsPrivate", false));
-        bundle.putString("userLastOnline", getIntent().getStringExtra("userLastOnline"));
+        bundle.putLong("userLastOnline", getIntent().getLongExtra("userLastOnline", 0L));
         bundle.putBoolean("userOnlineStatus", getIntent().getBooleanExtra("userOnlineStatus", false));
         userGalleryFragment.setArguments(bundle);
 
