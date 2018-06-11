@@ -158,7 +158,7 @@
     <string name="personalize_finish">You have successfully finished personalizing your account. Press finish and start connecting to people around you!</string>
 
     <!-- change ip accordingly -->
-    <string name="ipconfig">192.168.0.4:8080</string>
+    <string name="ipconfig">192.168.0.13:8080</string>
 
     <!-- strings related to register activity -->
     <string name="title_activity_register">Sign up</string>
@@ -212,7 +212,7 @@
 
     <string name="user_profile_fragment_swipes_text_view">Swipes</string>
     <string name="user_profile_fragment_matches_text_view">Matched</string>
-    <string name="user_profile_fragment_age_text_view">Age</string>
+    <string name="user_profile_fragment_age_text_view">Age:</string>
 
     <string-array name="alert_dialog_fragment_profile_image_options">
         <item>Delete photo</item>

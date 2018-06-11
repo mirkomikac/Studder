@@ -97,6 +97,10 @@ public class MediaPreviewFragment extends Fragment {
         mediaDescriptionTextView.setText(mediaDescription);
         mediaDateAddedTextView.setText(ClientUtils.formatDateTime(mediaDateAdded));
 
+        userProfilePicture.setOnClickListener(new CloseMediaPreviewFragment());
+
+        usernameTextView.setOnClickListener(new CloseMediaPreviewFragment());
+
         return view;
     }
 
@@ -129,6 +133,15 @@ public class MediaPreviewFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
+    }
+
+    private class CloseMediaPreviewFragment implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            getActivity().finish();
+        }
+
     }
 
 }

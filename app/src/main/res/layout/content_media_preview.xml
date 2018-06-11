@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".ProfileActivity"
-    tools:showIn="@layout/activity_profile">
+    tools:context=".MediaPreviewActivity"
+    tools:showIn="@layout/activity_media_preview">
 
     <LinearLayout
         android:id="@+id/content_media_preview_linear_layout"
