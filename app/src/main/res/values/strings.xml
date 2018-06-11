@@ -231,5 +231,6 @@
 
     <string name="user_profile_fragment_last_online">Last online:</string>
     <string name="title_activity_profile">ProfileActivity</string>
+    <string name="title_activity_google_maps">Map</string>
 
 </resources>

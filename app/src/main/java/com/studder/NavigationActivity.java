@@ -156,7 +156,9 @@ public class NavigationActivity extends AppCompatActivity
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
-
+            Intent googleMapsActivity = new Intent(this, GoogleMapsActivity.class);
+            startActivity(googleMapsActivity);
+            return true;
         } else if (id == R.id.nav_settings) {
             Intent settingsActivity = new Intent(this, SettingsActivity.class);
             startActivity(settingsActivity);

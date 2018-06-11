@@ -99,13 +99,6 @@ public class LoginActivity extends AppCompatActivity {
         }*/
 
 
-        Log.d(TAG, "onCreate(Bundle)");
-        try {
-            Log.d(TAG, FirebaseInstanceId.getInstance().getToken("581929999213", "FCM"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         if(SaveSharedPreferences.getLoggedIn(getApplicationContext())){
             Log.d(TAG, "onCreate(Bundle) : already logged in");
             Intent navigationActivity = new Intent(LoginActivity.this, NavigationActivity.class);
