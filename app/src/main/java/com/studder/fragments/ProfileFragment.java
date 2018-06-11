@@ -2,7 +2,9 @@ package com.studder.fragments;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -20,12 +22,14 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.InputType;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -42,6 +46,7 @@ import com.studder.database.schema.UserTable;
 import com.studder.holders.GalleryItemViewHolder;
 import com.studder.model.Media;
 import com.studder.model.Profile;
+import com.studder.model.UserMatch;
 import com.studder.utils.ImageUtils;
 
 import java.io.File;
@@ -68,6 +73,12 @@ public class ProfileFragment extends Fragment {
 
     private File mImageFile;
 
+    private Context mContext;
+    private TextView mDescriptionTextView;
+
+    private TextView mMatchedNumberTextView;
+
+    private Integer numberOfMatches;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -122,6 +133,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = getContext();
         if (getArguments() != null) {}
         mImageFile = Profile.getPhotoFile(getActivity());
 
@@ -129,6 +141,9 @@ public class ProfileFragment extends Fragment {
             String path = savedInstanceState.getString(IMAGE_PATH);
             mImageFile = new File(path);
         }
+
+
+
     }
 
     @Override
@@ -140,6 +155,7 @@ public class ProfileFragment extends Fragment {
         SharedPreferences pref = getContext().getSharedPreferences("USER_INFO", Context.MODE_PRIVATE);
         String name = pref.getString(UserTable.Cols.NAME, "Unknown");
         String surname = pref.getString(UserTable.Cols.SURNAME, "Unknown");
+        final String description = pref.getString(UserTable.Cols.DESCRIPTION, "Unknown");
 
         mImageViewRecyclerView = view.findViewById(R.id.recycler_view_fragment_profile_images);
         mNameSurnameTextView = view.findViewById(R.id.text_view_fragment_profile_name_surname);
@@ -147,8 +163,63 @@ public class ProfileFragment extends Fragment {
         mTakeImageNowImageButton = view.findViewById(R.id.image_button_fragment_profile_take_photo_now);
         mProfileImageView = view.findViewById(R.id.image_view_fragment_profile_profile_image);
         mChangeProfileInfoButton = view.findViewById(R.id.button_fragment_profile_change_info);
+        mDescriptionTextView = view.findViewById(R.id.text_view_fragment_profile_description);
+        mMatchedNumberTextView = view.findViewById(R.id.fragment_profile_matched_number);
+
+        String ipConfig = getResources().getString(R.string.ipconfig);
+
+        Ion.with(mContext)
+                .load("GET", "http://"+ipConfig+"/matches/getMatchesMe")
+                .as(new TypeToken<List<UserMatch>>(){})
+                .withResponse()
+                .setCallback(new FutureCallback<Response<List<UserMatch>>>() {
+                    @Override
+                    public void onCompleted(Exception e, Response<List<UserMatch>> result) {
+                        if(result.getHeaders().code() == 200){
+                            if(result.getResult() != null){
+                                numberOfMatches = result.getResult().size();
+                            } else {
+                                numberOfMatches = 0;
+                            }
+                            mMatchedNumberTextView.setText(numberOfMatches.toString());
+                        }
+                    }
+                });
+
 
         mNameSurnameTextView.setText(name + " " + surname);
+
+        mDescriptionTextView.setText(description);
+
+        mDescriptionTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setTitle("Change description");
+
+                final EditText input = new EditText(mContext);
+                input.setText(description);
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                input.setSingleLine(false);
+                builder.setView(input);
+
+                builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mDescriptionTextView.setText(input.getText().toString());
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+            }
+        });
+
 
         mImageRefreshTask = new ImageRefreshTask();
         mImageRefreshTask.execute((Void) null);

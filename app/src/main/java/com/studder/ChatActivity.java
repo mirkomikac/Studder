@@ -48,6 +48,8 @@ public class ChatActivity extends AppCompatActivity {
     private UserMatch userMatch;
     private User loggedUser;
 
+    private User user2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +59,7 @@ public class ChatActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
+
         mLinearLayoutManager = new LinearLayoutManager(this);
         mMessageRecycler = (RecyclerView) findViewById(R.id.reyclerview_message_list);
         mMessageRecycler.setLayoutManager(mLinearLayoutManager);
@@ -64,6 +67,8 @@ public class ChatActivity extends AppCompatActivity {
 
         mMessagesFetch = new MessagesFetch();
         mMessagesFetch.execute((Void) null);
+
+
     }
 
     private class MessagesFetch extends AsyncTask<Void, Void, Boolean> {
@@ -156,7 +161,18 @@ public class ChatActivity extends AppCompatActivity {
                             }
                         });
             }
-
+            String ipConfig = getResources().getString(R.string.ipconfig);
+            Ion.with(getApplicationContext())
+                    .load("http://"+ipConfig+"/users/" + userMatchId)
+                    .as(new TypeToken<User>() {})
+                    .withResponse()
+                    .setCallback(new FutureCallback<Response<User>>() {
+                        @Override
+                        public void onCompleted(Exception e, Response<User> result) {
+                            user2 = result.getResult();
+                            getSupportActionBar().setTitle(user2.getName() + " " + user2.getSurname());
+                        }
+                    });
             return true;
         }
 
