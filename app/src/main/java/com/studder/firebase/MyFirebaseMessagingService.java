@@ -18,6 +18,7 @@ import android.util.Base64;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.studder.ChatActivity;
+import com.studder.NavigationActivity;
 import com.studder.R;
 import com.studder.database.schema.UserMatchTable;
 import com.studder.database.schema.UserTable;
@@ -51,7 +52,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, ADMIN_CHANNEL_ID);
 
-        if(remoteMessage.getData().get("message") != null){
+        if(remoteMessage.getData().get("type").equals("message")){
             /*byte[] bitmapBytes = decode(remoteMessage.getData().get("image"), DEFAULT);
             Bitmap bmp = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
             bmp = bmp.createScaledBitmap(bmp, 100, 100, false);*/
@@ -63,9 +64,27 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             PendingIntent pendingIntent=PendingIntent.getActivity(getApplicationContext(),0,chatActivityIntent,0);
 
             notificationBuilder.setSmallIcon(R.drawable.ic_notifications_black_24dp)
-                    .setContentTitle(remoteMessage.getData().get("title"))
+                    .setContentTitle(remoteMessage.getNotification().getTitle())
                     .setContentText(remoteMessage.getData().get("message"))
                     .addAction(-1,"Reply",pendingIntent)
+                    .setAutoCancel(true)
+                    .setSound(defaultSoundUri);
+
+            mNotificationManager.notify(notificationId, notificationBuilder.build());
+
+            NotificationManager notif = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notif.notify(notificationId, notificationBuilder.build());
+        } else if(remoteMessage.getData().get("type").equals("match")){
+            Intent navigationActivityIntent = new Intent(getApplicationContext(), NavigationActivity.class);
+            navigationActivityIntent.putExtra(UserMatchTable.Cols._ID, remoteMessage.getData().get("matchId"));
+            navigationActivityIntent.putExtra(UserTable.Cols._ID, remoteMessage.getData().get("userId"));
+
+            PendingIntent pendingIntent=PendingIntent.getActivity(getApplicationContext(),0,navigationActivityIntent,0);
+
+            notificationBuilder.setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                    .setContentTitle(remoteMessage.getNotification().getTitle())
+                    .setContentText(remoteMessage.getNotification().getBody())
+                    .addAction(-1,"See match",pendingIntent)
                     .setAutoCancel(true)
                     .setSound(defaultSoundUri);
 
