@@ -2,6 +2,7 @@ package com.studder;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -21,6 +22,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -29,6 +31,7 @@ import com.google.gson.reflect.TypeToken;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
+import com.studder.database.schema.UserTable;
 import com.studder.fragments.InboxFragment;
 import com.studder.fragments.ProfileFragment;
 import com.studder.model.User;
@@ -42,8 +45,10 @@ public class NavigationActivity extends AppCompatActivity
     private FloatingActionButton matchingButton;
     private ViewPager mFragmentVewPager;
 
-    private TextView usernameTV;
 
+    private TextView usernameTV;
+    private TextView drawerProfileNameTextView;
+    private ImageView drawerProfileImageImageView;
 
 
     @Override
@@ -62,6 +67,18 @@ public class NavigationActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        SharedPreferences pref = getSharedPreferences("USER_INFO", MODE_PRIVATE);
+
+        View headerView = navigationView.getHeaderView(0);
+        drawerProfileNameTextView = (TextView) headerView.findViewById(R.id.text_view_nav_header_navigation_profile_name);
+        drawerProfileNameTextView.setText(pref.getString(UserTable.Cols.NAME, "Application drawer"));
+
+        navigationView.getMenu().findItem(R.id.nav_share).setVisible(false);
+        navigationView.getMenu().findItem(R.id.nav_send).setVisible(false);
+        navigationView.getMenu().findItem(R.id.nav_gallery).setVisible(false);
+        navigationView.getMenu().findItem(R.id.nav_slideshow).setVisible(false);
+
         navigationView.setNavigationItemSelectedListener(this);
 
         mFragmentVewPager = findViewById(R.id.view_pager_app_bar_navigation_fragments);
