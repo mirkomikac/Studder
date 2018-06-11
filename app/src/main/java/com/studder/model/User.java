@@ -28,7 +28,7 @@ public class User implements Serializable {
     private String city;
 
     private Boolean firstTimeLogin;
-    private Boolean firstTIme;
+    private Boolean firstTime;
 
     private UserMatch mUserMatch;
     private String profileImageEncoded;
@@ -241,10 +241,10 @@ public class User implements Serializable {
     }
 
     public Boolean getFirstTIme() {
-        return firstTIme;
+        return firstTime;
     }
 
     public void setFirstTIme(Boolean firstTIme) {
-        this.firstTIme = firstTIme;
+        this.firstTime = firstTime;
     }
 }
