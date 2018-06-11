@@ -48,7 +48,7 @@ public class StudderCard {
     //method to be executed, when the view is ready to be used
     @Resolve
     private void onResolved(){
-        Glide.with(mContext).load(mProfile.getImageUri()).into(profileImageView);
+        Glide.with(mContext).load(mProfile.getProfileImgBitmap()).into(profileImageView);
         nameAgeTxt.setText(mProfile.getName() + ", " + mProfile.getAge());
         locationNameTxt.setText(mProfile.getLocation());
     }

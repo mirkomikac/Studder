@@ -1,6 +1,7 @@
 package com.studder.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -28,6 +30,7 @@ import com.studder.adapters.ImageAdapter;
 import com.studder.database.schema.UserTable;
 import com.studder.model.Media;
 import com.studder.model.User;
+import com.studder.utils.ClientUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -57,10 +60,15 @@ public class UserGaleryFragment extends Fragment {
     private TextView swipesTextView;
     private TextView matchesTextView;
     private ImageView profileImageView;
+    private LinearLayout lastOnlineLinearLayout;
     private TextView isOnlineTextView;
+    private TextView lastOnlineFixedTextView;
     private TextView lastOnlineTextView;
 
     private LoadImagesTask loadImagesTask;
+    private LoadProfilePicture loadProfilePictureTask;
+    private FetchSwipesCount fetchSwipesCountTask;
+    private FetchMatchesCount fetchMatchesCountTask;
 
     public UserGaleryFragment() {
     }
@@ -107,24 +115,37 @@ public class UserGaleryFragment extends Fragment {
         swipesTextView = view.findViewById(R.id.user_profile_fragment_swipes_text_view);
         matchesTextView = view.findViewById(R.id.user_profile_fragment_matches_text_view);
         profileImageView = view.findViewById(R.id.user_profile_fragment_profile_image);
+
+        lastOnlineLinearLayout = view.findViewById(R.id.user_profile_fragment_online_status_linear_layout);
         isOnlineTextView = view.findViewById(R.id.user_profile_fragment_is_online_text_view);
+        lastOnlineFixedTextView = view.findViewById(R.id.user_profile_fragment_last_online_fixed_text_view);
         lastOnlineTextView = view.findViewById(R.id.user_profile_fragment_last_online_text_view);
 
         nameTextView.setText(name);
         surnameTextView.setText(surname);
         aboutTextView.setText(about);
-        ageTextView.setText(calculateAge(age)+"");
+        ageTextView.setText(ClientUtils.calculateAge(age)+"");
         lastOnlineTextView.setText(dateFormat.format(lastOnline));
 
         if(onlineStatus) {
-            view.findViewById(R.id.user_profile_fragment_last_online_fixed_text_view).setVisibility(View.INVISIBLE);
-            lastOnlineTextView.setVisibility(View.INVISIBLE);
+            lastOnlineLinearLayout.removeView(lastOnlineFixedTextView);
+            lastOnlineLinearLayout.removeView(lastOnlineTextView);
         }else {
-            isOnlineTextView.setVisibility(View.INVISIBLE);
+            lastOnlineLinearLayout.removeView(isOnlineTextView);
         }
 
         loadImagesTask = new LoadImagesTask();
         loadImagesTask.execute(userId);
+
+        loadProfilePictureTask = new LoadProfilePicture();
+        loadProfilePictureTask.execute(userId);
+
+        fetchSwipesCountTask = new FetchSwipesCount();
+        fetchSwipesCountTask.execute(userId);
+
+        fetchMatchesCountTask = new FetchMatchesCount();
+        fetchMatchesCountTask.execute(userId);
+
         return view;
     }
 
@@ -133,19 +154,6 @@ public class UserGaleryFragment extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
-
-    private int calculateAge(Date date) {
-        Calendar calendar1 = Calendar.getInstance();
-        Calendar calendar2 = Calendar.getInstance();
-        calendar1.setTime(date);
-        int diff = calendar2.get(Calendar.YEAR) - calendar1.get(Calendar.YEAR);
-        if (calendar1.get(Calendar.MONTH) > calendar2.get(Calendar.MONTH) || (calendar1.get(Calendar.MONTH)
-                == calendar2.get(Calendar.MONTH) && calendar1.get(Calendar.DATE) > calendar2.get(Calendar.DATE))) {
-            diff--;
-        }
-        return diff;
-    }
-
 
     @Override
     public void onAttach(Context context) {
@@ -180,25 +188,103 @@ public class UserGaleryFragment extends Fragment {
             Integer id = userId[0];
             String ipConfig = getResources().getString(R.string.ipconfig);
             Ion.with(getContext())
-                    .load("GET", "http://"+ipConfig+"/media/" + id)
+                    .load("GET", "http://" + ipConfig + "/media/" + id)
                     .as(new TypeToken<List<Media>>(){})
                     .withResponse()
                     .setCallback(new FutureCallback<Response<List<Media>>>() {
                         @Override
                         public void onCompleted(Exception e, Response<List<Media>> result) {
                             if(result.getHeaders().code() == 200){
-
                                 List<Media> media = result.getResult();
 
                                 for(int i = 0; i < media.size(); i++) {
-                                    byte[] bitmapBytes = Base64.decode(media.get(i).getEncodedImage(), Base64.DEFAULT);
-                                    Bitmap bmp = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
-                                    bmp = bmp.createScaledBitmap(bmp, 200, 200, false);
-                                    media.get(i).setBitmap(BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length));
+                                    media.get(i).setBitmap(ClientUtils.getBitmapForMedia(media.get(i).getEncodedImage()));
                                 }
 
-                                ImageAdapter booksAdapter = new ImageAdapter(getActivity(), media);
-                                gridImageView.setAdapter(booksAdapter);
+                                ImageAdapter imageAdapter = new ImageAdapter(getActivity(), media);
+                                gridImageView.setAdapter(imageAdapter);
+                            }
+                        }
+                    });
+            return null;
+        }
+    }
+
+    private class LoadProfilePicture extends AsyncTask<Integer, Void, Media> {
+
+        @Override
+        protected Media doInBackground(Integer... userId) {
+
+            Integer id = userId[0];
+            String ipConfig = getResources().getString(R.string.ipconfig);
+            Ion.with(getContext())
+                    .load("GET", "http://" + ipConfig + "/media/getProfileImage/" + id)
+                    .as(new TypeToken<Media>(){})
+                    .withResponse()
+                    .setCallback(new FutureCallback<Response<Media>>() {
+                        @Override
+                        public void onCompleted(Exception e, Response<Media> result) {
+                            if(result.getHeaders().code() == 200){
+                                Media media = result.getResult();
+                                String encodedMedia = media.getEncodedImage();
+                                media.setBitmap(ClientUtils.getBitmapForMedia(encodedMedia));
+                                profileImageView.setImageBitmap(media.getBitmap());
+
+                                Intent intent = getActivity().getIntent();
+                                String path = ClientUtils.saveMediaToPhoneStorage(intent.getStringExtra("userUsername"), media.getName(), encodedMedia);
+                                intent.putExtra("userProfileImagePath", path);
+                            }
+                        }
+                    });
+            return null;
+        }
+    }
+
+    private class FetchSwipesCount extends AsyncTask<Integer, Void, Integer> {
+
+        @Override
+        protected Integer doInBackground(Integer... userId) {
+
+            Integer id = userId[0];
+
+            String ipConfig = getResources().getString(R.string.ipconfig);
+            Ion.with(getContext())
+                    .load("GET", "http://" + ipConfig + "/swipes/count/" + id)
+                    .as(new TypeToken<Integer>(){})
+                    .withResponse()
+                    .setCallback(new FutureCallback<Response<Integer>>() {
+                        @Override
+                        public void onCompleted(Exception e, Response<Integer> result) {
+                            if(result.getHeaders().code() == 200){
+
+                                Integer swipesCount = result.getResult();
+                                swipesTextView.setText(swipesCount + "");
+                            }
+                        }
+                    });
+            return null;
+        }
+    }
+
+    private class FetchMatchesCount extends AsyncTask<Integer, Void, Integer> {
+
+        @Override
+        protected Integer doInBackground(Integer... userId) {
+
+            Integer id = userId[0];
+
+            String ipConfig = getResources().getString(R.string.ipconfig);
+            Ion.with(getContext())
+                    .load("GET", "http://" + ipConfig + "/matches/count/" + id)
+                    .as(new TypeToken<Integer>(){})
+                    .withResponse()
+                    .setCallback(new FutureCallback<Response<Integer>>() {
+                        @Override
+                        public void onCompleted(Exception e, Response<Integer> result) {
+                            if(result.getHeaders().code() == 200){
+
+                                Integer matchesCount = result.getResult();
+                                matchesTextView.setText(matchesCount + "");
                             }
                         }
                     });

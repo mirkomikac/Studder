@@ -27,7 +27,8 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -81,7 +82,11 @@
             android:label="@string/title_activity_profile"
             android:parentActivityName=".NavigationActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-
+        <activity
+            android:name=".MediaPreviewActivity"
+            android:label="@string/title_activity_media_preview"
+            android:parentActivityName=".ProfileActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.com.studder.provider"

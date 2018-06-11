@@ -65,7 +65,9 @@ public class StudderSQLiteOpenHelper extends SQLiteOpenHelper {
                     UserTable.Cols.IS_DEACTIVATED + " INTEGER, " +
                     UserTable.Cols.USER_GENDER + " TEXT, " +
                     UserTable.Cols.SWIPE_THROW + " TEXT, " +
-                    UserTable.Cols.CITY + " TEXT)";
+                    UserTable.Cols.CITY + " TEXT, " +
+                    UserTable.Cols.FIRST_TIME_LOGIN + " INTEGER, " +
+                    UserTable.Cols.FIRST_TIME + " INTEGER)";
 
 
     public StudderSQLiteOpenHelper(Context context) {

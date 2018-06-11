@@ -20,4 +20,16 @@ public class SaveSharedPreferences {
         return getPreferences(context).getBoolean(PreferencesUtility.LOGGED_IN_PREF, false);
     }
 
+    public static void setFirstTimeLogin(Context context, boolean firstTimeLogin)
+    {
+        SharedPreferences.Editor editor = getPreferences(context).edit();
+        editor.putBoolean(PreferencesUtility.FIRST_TIME_LOGIN_PREF, firstTimeLogin);
+        editor.apply();
+    }
+
+    public static boolean getFirstTimeLogin(Context context)
+    {
+        return getPreferences(context).getBoolean(PreferencesUtility.FIRST_TIME_LOGIN_PREF, true);
+    }
+
 }

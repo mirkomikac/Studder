@@ -9,6 +9,9 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -24,10 +27,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -57,10 +63,15 @@ public class NavigationActivity extends AppCompatActivity
     private LocationManager mLocationManager;
     private String provider;
 
+
+    private TextView usernameTV;
+    private TextView drawerProfileNameTextView;
+    private ImageView drawerProfileImageImageView;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Log.d(TAG, "onCreate(Bunlde) -> start");
 
         setContentView(R.layout.activity_navigation);
@@ -74,6 +85,18 @@ public class NavigationActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        SharedPreferences pref = getSharedPreferences("USER_INFO", MODE_PRIVATE);
+
+        View headerView = navigationView.getHeaderView(0);
+        drawerProfileNameTextView = (TextView) headerView.findViewById(R.id.text_view_nav_header_navigation_profile_name);
+        drawerProfileNameTextView.setText(pref.getString(UserTable.Cols.NAME, "Application drawer"));
+
+        navigationView.getMenu().findItem(R.id.nav_share).setVisible(false);
+        navigationView.getMenu().findItem(R.id.nav_send).setVisible(false);
+        navigationView.getMenu().findItem(R.id.nav_gallery).setVisible(false);
+        navigationView.getMenu().findItem(R.id.nav_slideshow).setVisible(false);
+
         navigationView.setNavigationItemSelectedListener(this);
 
         mFragmentVewPager = findViewById(R.id.view_pager_app_bar_navigation_fragments);
@@ -84,6 +107,7 @@ public class NavigationActivity extends AppCompatActivity
 
         mFragmentVewPager.setAdapter(spa);
         Log.d(TAG, "onCreate(Bunlde) -> added SwipePagerAdapter -> ViewPager");
+
 
         matchingButton = (FloatingActionButton) findViewById(R.id.fab);
         matchingButton.setOnClickListener(new View.OnClickListener(){
@@ -264,6 +288,7 @@ public class NavigationActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+
         if (id == R.id.nav_match) {
             Intent matchActivity = new Intent(this, MatchingActivity.class);
             startActivity(matchActivity);
@@ -285,10 +310,11 @@ public class NavigationActivity extends AppCompatActivity
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        usernameTV = findViewById(R.id.textView123);
+
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
 
     private class SwipePagerAdapter extends FragmentPagerAdapter{
 
