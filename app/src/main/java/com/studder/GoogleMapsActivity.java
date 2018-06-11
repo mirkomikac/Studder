@@ -3,6 +3,8 @@ package com.studder;
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
@@ -27,10 +29,24 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.reflect.TypeToken;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.Response;
+import com.studder.database.schema.UserTable;
+import com.studder.model.Profile;
+import com.studder.model.StudderCard;
+import com.studder.model.User;
+import com.studder.model.UserMatch;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCallback,LocationListener {
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
+    public static final String TAG = "GoogleMapsActivity";
 
     private LocationManager mLocationManager;
     private String provider;
@@ -64,6 +80,7 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         if (isProviderAvailable() && (provider != null)) {
+            Log.d(TAG, "onMapReady(googleMap)-> locateCurrentPosition()");
             locateCurrentPosition();
         }
 
@@ -74,10 +91,12 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // Check Permissions Now
+            Log.d(TAG, "locateCurrentPosition()->  permission not granted");
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
                 // Display UI and wait for user interaction
             } else {
+                Log.d(TAG, "locateCurrentPosition()-> request permission ");
                 ActivityCompat.requestPermissions(
                         this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_LOCATION);
@@ -92,24 +111,43 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions,
+                                           int[] grantResults) {
+        Log.d(TAG, "onRequestPermissionsResult()->  validate request permission");
+        if (requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
+            if(grantResults.length == 1
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "onRequestPermissionsResult()->  locateCurrentPosition()");
+                locateCurrentPosition();
+            } else {
+                // Permission was denied or request was cancelled
+            }
+        }
+    }
+
 
 
     private void updateWithNewLocation(Location location) {
-
+        Log.d(TAG, "updateWithNewLocation(location)->  get current position");
         if (location != null && provider != null) {
             double lng = location.getLongitude();
             double lat = location.getLatitude();
-
+            Log.d(TAG, "updateWithNewLocation(location)-> addBoundaryToCurrentPosition(lat, lng)");
             addBoundaryToCurrentPosition(lat, lng);
+            Log.d(TAG, "updateWithNewLocation(location)-> addUserMarkers()");
 
+            Log.d(TAG, "updateWithNewLocation(location)-> cameraPostion()");
             CameraPosition camPosition = new CameraPosition.Builder()
-                    .target(new LatLng(lat, lng)).zoom(10f).build();
+                    .target(new LatLng(lat, lng)).zoom(12f).build();
 
             if (mMap != null)
+                Log.d(TAG, "updateWithNewLocation(location)-> animateCamera()");
                 mMap.animateCamera(CameraUpdateFactory
                         .newCameraPosition(camPosition));
         } else {
-            Log.d("Location error", "Something went wrong");
+            Log.d(TAG, "updateWithNewLocation(Location location)-> ERROR location == null || provider == null");
         }
     }
 
@@ -120,15 +158,53 @@ public class GoogleMapsActivity extends FragmentActivity implements OnMapReadyCa
         mMarkerOptions.icon(BitmapDescriptorFactory
                 .fromResource(R.drawable.map_marker_blue));
         mMarkerOptions.anchor(0.5f, 0.5f);
-
+        mMarkerOptions.flat(true);
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("USER_INFO", Context.MODE_PRIVATE);
+        final Integer radius = preferences.getInt(UserTable.Cols.RADIUS, -1);
+        mMarkerOptions.title(preferences.getString(UserTable.Cols.USERNAME, ""));
+        mMarkerOptions.snippet(preferences.getString(UserTable.Cols.NAME, "")+" "+ preferences.getString(UserTable.Cols.SURNAME, ""));
         CircleOptions mOptions = new CircleOptions()
-                .center(new LatLng(lat, lang)).radius(10000)
+                .center(new LatLng(lat, lang)).radius(radius*1000)
                 .strokeColor(0x110000FF).strokeWidth(1).fillColor(0x110000FF);
         mMap.addCircle(mOptions);
         if (mCurrentPosition != null)
             mCurrentPosition.remove();
         mCurrentPosition = mMap.addMarker(mMarkerOptions);
+
+        final String ipConfig = getResources().getString(R.string.ipconfig);
+        Log.d(TAG, "updateWithNewLocation(location)-> addBoundaryToCurrentPosition(lat, lng)-> get userMarkers");
+        Ion.with(getApplicationContext())
+                .load("http://"+ipConfig+"/users/getForMarking")
+                .as(new TypeToken<List<User>>() {})
+                .withResponse()
+                .setCallback(new FutureCallback<Response<List<User>>>() {
+                    @Override
+                    public void onCompleted(Exception e, Response<List<User>> result) {
+                        if(result.getHeaders().code() == 200){
+                            Log.i(TAG, "success");
+                            ArrayList<User> users = (ArrayList<User>) result.getResult();
+                            //profile image
+                            MarkerOptions mMarkerOptions = new MarkerOptions();
+                            mMarkerOptions.icon(BitmapDescriptorFactory
+                                    .fromResource(R.drawable.map_marker_red));
+                            mMarkerOptions.anchor(0.5f, 0.5f);
+                            mMarkerOptions.flat(true);
+                            for(User u : users){
+                                mMarkerOptions.title(u.getUsername());
+                                mMarkerOptions.snippet(u.getName()+" "+ u.getSurname());
+                                mMarkerOptions.position(new LatLng(u.getLatitude(), u.getLongitude()));
+                                mMap.addMarker(mMarkerOptions);
+                            }
+                        } else {
+                            Log.e(TAG, "response != 200");
+                        }
+
+                    }
+                });
+
     }
+
+
 
     private boolean isProviderAvailable() {
         mLocationManager = (LocationManager) getSystemService(

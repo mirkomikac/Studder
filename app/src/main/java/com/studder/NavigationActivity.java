@@ -1,9 +1,18 @@
 package com.studder;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -20,24 +29,33 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
+import com.studder.database.schema.UserTable;
 import com.studder.fragments.InboxFragment;
 import com.studder.fragments.ProfileFragment;
 import com.studder.model.User;
+import com.studder.model.UserMatch;
 import com.studder.sharedpreferconfiguration.SaveSharedPreferences;
+
+import org.json.JSONObject;
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final String TAG = "NavigationActivity";
 
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
     private FloatingActionButton matchingButton;
     private ViewPager mFragmentVewPager;
+    private LocationManager mLocationManager;
+    private String provider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +95,103 @@ public class NavigationActivity extends AppCompatActivity
             }
         });
         Log.d(TAG, "onCreate(Bunlde) -> success");
+
+
+        if (isProviderAvailable() && (provider != null)) {
+            Log.d(TAG, "onMapReady(googleMap)-> locateCurrentPosition()");
+            locateCurrentPosition();
+        }
+    }
+
+    private void locateCurrentPosition() {
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Check Permissions Now
+            Log.d(TAG, "locateCurrentPosition()->  permission not granted");
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+                // Display UI and wait for user interaction
+            } else {
+                Log.d(TAG, "locateCurrentPosition()-> request permission ");
+                ActivityCompat.requestPermissions(
+                        this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+            }
+        } else {
+            // permission has been granted, continue as usual
+            Location location = mLocationManager.getLastKnownLocation(provider);
+
+            SharedPreferences preferences = getApplicationContext().getSharedPreferences("USER_INFO", Context.MODE_PRIVATE);
+            final String username = preferences.getString(UserTable.Cols.USERNAME, "");
+
+            JsonObject  json = new JsonObject ();
+            json.addProperty("username", username);
+            json.addProperty("latitude",location.getLatitude());
+            json.addProperty("longitude",location.getLongitude());
+            final String ipConfig = getResources().getString(R.string.ipconfig);
+            Ion.with(getApplicationContext())
+                    .load("POST","http://"+ipConfig+"/users/update")
+                    .setJsonObjectBody(json)
+                    .asJsonObject()
+                    .withResponse()
+                    .setCallback(new FutureCallback<Response<JsonObject>>() {
+                        @Override
+                        public void onCompleted(Exception e, Response<JsonObject>  result) {
+                            if(result.getHeaders().code() == 200){
+                                Log.d(TAG, "code == 200");
+                            } else {
+                                Log.d(TAG, "code != 200");
+                            }
+                        }
+                    });
+
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions,
+                                           int[] grantResults) {
+        Log.d(TAG, "onRequestPermissionsResult()->  validate request permission");
+        if (requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
+            if(grantResults.length == 1
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "onRequestPermissionsResult()->  locateCurrentPosition()");
+                locateCurrentPosition();
+            } else {
+                // Permission was denied or request was cancelled
+            }
+        }
+    }
+
+    private boolean isProviderAvailable() {
+        mLocationManager = (LocationManager) getSystemService(
+                Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+        criteria.setAltitudeRequired(false);
+        criteria.setBearingRequired(false);
+        criteria.setCostAllowed(true);
+        criteria.setPowerRequirement(Criteria.POWER_LOW);
+
+        provider = mLocationManager.getBestProvider(criteria, true);
+        if (mLocationManager
+                .isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            provider = LocationManager.NETWORK_PROVIDER;
+
+            return true;
+        }
+
+        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            provider = LocationManager.GPS_PROVIDER;
+            return true;
+        }
+
+        if (provider != null) {
+            return true;
+        }
+        return false;
     }
 
     @Override
