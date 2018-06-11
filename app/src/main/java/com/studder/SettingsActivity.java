@@ -72,27 +72,53 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             JsonObject user = new JsonObject();
             //when you get username from sharedpref, put it in so server can update...
             SharedPreferences sp = context.getSharedPreferences("USER_INFO", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+
             String username = sp.getString(UserTable.Cols.USERNAME, "Unknown value");
             user.addProperty("username", username);
             if(preference instanceof EditTextPreference){
                 Log.i(TAG, preference.getKey());
                 switch (preference.getKey()){
-                    case "example_text": user.addProperty("name", stringValue); break;
-                    case "example_surname": user.addProperty("surname", stringValue); break;
+                    case "example_text": {
+                        user.addProperty("name", stringValue);
+                        editor.putString(UserTable.Cols.NAME, stringValue);
+                        break;
+                    }
+                    case "example_surname": {
+                        user.addProperty("surname", stringValue);
+                        editor.putString(UserTable.Cols.SURNAME, stringValue);
+                        break;
+                    }
                     //case "example_email": user.addProperty("username", stringValue);
                     //case "example_age": user.addProperty("age", stringValue);
-                    case "example_city": user.addProperty("city", stringValue); break;
-                    case "example_location_radius": user.addProperty("radius", stringValue); break;
-                }
+                    case "example_city": {
+                        user.addProperty("city", stringValue);
+                        editor.putString(UserTable.Cols.CITY,  stringValue);
+                        break;
+                    }
+                    case "example_location_radius": {
+                        user.addProperty("radius", stringValue);
+                        editor.putInt(UserTable.Cols.RADIUS, Integer.parseInt(stringValue));
+                        break;
+                    }
+            }
             } else if(preference instanceof ListPreference){
                 Log.i(TAG, preference.getKey());
                 switch (preference.getKey()){
-                    case "sex_list" : user.addProperty("userGender", stringValue);
-                    case "interested_in_list" : user.addProperty("swipeThrow", stringValue);
+                    case "sex_list" : {
+                        user.addProperty("userGender", stringValue);
+                        editor.putString(UserTable.Cols.USER_GENDER, stringValue);
+                        break;
+                    }
+                    case "interested_in_list" : {
+                        user.addProperty("swipeThrow", stringValue);
+                        editor.putString(UserTable.Cols.SWIPE_THROW, stringValue);
+                        break;
+                    }
                 }
             }
 
-
+            editor.apply();
 
 
             if (preference instanceof ListPreference) {

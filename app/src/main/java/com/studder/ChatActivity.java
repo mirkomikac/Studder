@@ -67,6 +67,8 @@ public class ChatActivity extends AppCompatActivity {
     private Query mQuery;
     private FirebaseFirestore db;
 
+    private User user2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +76,7 @@ public class ChatActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_chat);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
 
         mLinearLayoutManager = new LinearLayoutManager(this);
@@ -100,6 +103,8 @@ public class ChatActivity extends AppCompatActivity {
 
         mMessagesFetch = new MessagesFetch();
         mMessagesFetch.execute((Void) null);
+
+
     }
 
     private class MessagesFetch extends AsyncTask<Void, Void, Boolean> {
@@ -149,6 +154,19 @@ public class ChatActivity extends AppCompatActivity {
                             }
                         });
             }
+          
+            String ipConfig = getResources().getString(R.string.ipconfig);
+            Ion.with(getApplicationContext())
+                    .load("http://"+ipConfig+"/users/" + userMatchId)
+                    .as(new TypeToken<User>() {})
+                    .withResponse()
+                    .setCallback(new FutureCallback<Response<User>>() {
+                        @Override
+                        public void onCompleted(Exception e, Response<User> result) {
+                            user2 = result.getResult();
+                            getSupportActionBar().setTitle(user2.getName() + " " + user2.getSurname());
+                        }
+                    });
 
             sendButton = (Button) findViewById(R.id.button_chatbox_send);
             editText = (EditText) findViewById(R.id.edittext_chatbox);
