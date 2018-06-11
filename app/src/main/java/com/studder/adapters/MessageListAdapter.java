@@ -125,6 +125,7 @@ public class MessageListAdapter extends FirestoreRecyclerAdapter<MessageFirestor
 
         void bind(MessageFirestoreModel message) {
             messageText.setText(message.getText());
+
             timeText.setText(ClientUtils.formatDateTime(message.getDate().getTime()));
             nameText.setText(message.getSender());
         }

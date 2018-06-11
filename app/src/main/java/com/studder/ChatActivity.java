@@ -19,7 +19,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -140,6 +139,7 @@ public class ChatActivity extends AppCompatActivity {
             }
 
             final Long userMatchId = getIntent().getLongExtra(UserMatchTable.Cols._ID,-1);
+
 
             if(userMatchId != -1){
                 final String ipConfig = getResources().getString(R.string.ipconfig);
