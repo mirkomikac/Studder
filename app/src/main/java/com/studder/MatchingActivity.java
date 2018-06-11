@@ -47,9 +47,9 @@ public class MatchingActivity extends AppCompatActivity {
                         .setRelativeScale(0.01f)
                         .setSwipeInMsgLayoutId(R.layout.swipe_accept)
                         .setSwipeOutMsgLayoutId(R.layout.swipe_reject));
-
+        String ipConfig = getResources().getString(R.string.ipconfig);
         Ion.with(context)
-                .load("http://10.0.2.2:8080/users/getForSwipping")
+                .load("http://"+ipConfig+"/users/getForSwipping")
                 .as(new TypeToken<List<User>>() {})
                 .withResponse()
                 .setCallback(new FutureCallback<Response<List<User>>>() {

@@ -327,13 +327,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             SharedPreferences sp = context.getSharedPreferences("USER_INFO", MODE_PRIVATE);
 
-            String locationRadius = sp.getString(UserTable.Cols.RADIUS, "Unknown value");
+            Integer locationRadius = sp.getInt(UserTable.Cols.RADIUS, -1);
             String interestedIn = sp.getString(UserTable.Cols.SWIPE_THROW, "Unknown value");
 
             if(findPreference("example_location_radius") instanceof EditTextPreference){
                 EditTextPreference radiusPref = (EditTextPreference) findPreference("example_location_radius");
-                radiusPref.setSummary(locationRadius);
-                radiusPref.setText(locationRadius);
+                radiusPref.setSummary(locationRadius.toString());
+                radiusPref.setText(locationRadius.toString());
             }
 
             if(findPreference("interested_in_list") instanceof  ListPreference){
