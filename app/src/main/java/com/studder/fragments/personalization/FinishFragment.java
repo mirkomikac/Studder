@@ -1,7 +1,10 @@
 package com.studder.fragments.personalization;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -9,10 +12,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.Response;
 import com.studder.NavigationActivity;
-import com.studder.PersonalizeActivity;
 import com.studder.R;
+import com.studder.database.schema.UserTable;
+import com.studder.model.Media;
+import com.studder.utils.ClientUtils;
+
+import java.io.File;
+import java.util.Date;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -70,13 +84,115 @@ public class FinishFragment extends Fragment {
         mFinishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent navigationActivity = getFinishIntent();
-                startActivity(navigationActivity);
-                getActivity().finish();
+                new UpdateUserInfoTask().doInBackground();
             }
         });
 
         return view;
 
     }
+
+    public class UpdateUserInfoTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            Intent intent = getActivity().getIntent();
+
+            final String userName = intent.getStringExtra("userName");
+            final String userSurname = intent.getStringExtra("userSurname");
+            final String aboutUser = intent.getStringExtra("aboutUser");
+            final String userBirthday = intent.getStringExtra("userBirthday");
+            Date birthday = ClientUtils.parseDateTime(userBirthday, ClientUtils.DEFAULT_DATE_FORMAT);
+            final Integer chosenRange = intent.getIntExtra("chosenRange", 2);
+
+            final SharedPreferences preferences = getActivity().getApplicationContext().getSharedPreferences("USER_INFO", Context.MODE_PRIVATE);
+            final String username = preferences.getString(UserTable.Cols.USERNAME, "");
+
+            if(birthday == null) {
+                birthday = new Date();
+            }
+
+            JsonObject json = new JsonObject();
+            json.addProperty("username", username);
+            json.addProperty("name", userName);
+            json.addProperty("surname", userSurname);
+            json.addProperty("description", aboutUser);
+            json.addProperty("birthday", birthday.getTime());
+            json.addProperty("radius", chosenRange);
+
+            String ipConfig = getResources().getString(R.string.ipconfig);
+
+            Ion.with(getContext())
+                    .load("POST","http://"+ipConfig+"/users/update")
+                    .setJsonObjectBody(json)
+                    .asJsonObject()
+                    .withResponse()
+                    .setCallback(new FutureCallback<Response<JsonObject>>() {
+                        @Override
+                        public void onCompleted(Exception e, Response<JsonObject> result) {
+                            if(result.getHeaders().code() == 200) {
+                                SharedPreferences.Editor editor = preferences.edit();
+                                editor.putString(UserTable.Cols.USERNAME, username);
+                                editor.putString(UserTable.Cols.NAME, userName);
+                                editor.putString(UserTable.Cols.SURNAME, userSurname);
+                                editor.putString(UserTable.Cols.DESCRIPTION, aboutUser);
+                                editor.putString(UserTable.Cols.BIRTHDAY, userBirthday);
+                                editor.putInt(UserTable.Cols.RADIUS, chosenRange);
+
+                                new UpdateProfilePicture().doInBackground();
+                            }
+                        }
+                    });
+            return null;
+        }
+    }
+
+    public class UpdateProfilePicture extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            Intent intent = getActivity().getIntent();
+
+            String profileImagePath = intent.getStringExtra("userProfilePicture");
+            File profileImageFile = new File(profileImagePath);
+            String profileImageDescription = intent.getStringExtra("profileImageDescription");
+
+            final String ipConfig = getResources().getString(R.string.ipconfig);
+
+            Ion.with(getContext())
+                    .load("POST", "http://" + ipConfig + "/media/upload/fixedText")
+                    .setMultipartParameter("file", "file")
+                    .setMultipartFile("file", "image/jpg", profileImageFile)
+                    .as(new TypeToken<Media>() {})
+                    .withResponse()
+                    .setCallback(new FutureCallback<Response<Media>>() {
+                        @Override
+                        public void onCompleted(Exception e, Response<Media> result) {
+                            if (result.getHeaders().code() == 200) {
+
+                                Media media = result.getResult();
+
+                                Ion.with(getContext())
+                                        .load("GET","http://" + ipConfig + "/media/setProfileImage/" + media.getId())
+                                        .asJsonObject()
+                                        .withResponse()
+                                        .setCallback(new FutureCallback<Response<JsonObject>>() {
+
+                                            @Override
+                                            public void onCompleted(Exception e, Response<JsonObject> result) {
+                                                if(result.getHeaders().code() == 200) {
+                                                    Intent navigationActivity = getFinishIntent();
+                                                    startActivity(navigationActivity);
+                                                    getActivity().finish();
+                                                }
+                                            }
+
+                                        });
+                            }
+                        }
+                    });
+            return null;
+        }
+    }
+
 }

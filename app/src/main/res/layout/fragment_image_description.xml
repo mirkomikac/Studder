@@ -43,7 +43,7 @@
             android:layout_margin="16dp">
 
             <EditText
-                android:id="@+id/edit_text_personalize_image_description_personal_description"
+                android:id="@+id/edit_text_personalize_image_description"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/personalize_image_description_personal_description_hint"

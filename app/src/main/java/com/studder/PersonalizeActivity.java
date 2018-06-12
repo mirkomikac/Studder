@@ -159,9 +159,6 @@ public class PersonalizeActivity extends AppCompatActivity {
                     return ImageDescriptionFragment.newInstance(position);
                 }
                 case 3: {
-                    return TabbedFragment.newInstance(1);
-                }
-                case 4: {
                     return FinishFragment.newInstance();
                 }
                 default: {
@@ -173,7 +170,7 @@ public class PersonalizeActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             Log.d(TAG, "SectionsPagerAdapter -> getCount()");
-            return 5;
+            return 4;
         }
     }
 }

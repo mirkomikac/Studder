@@ -1,26 +1,26 @@
 package com.studder.fragments.personalization;
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.studder.R;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.Calendar;
 
 /**
@@ -45,6 +45,10 @@ public class UserInfoFragment extends Fragment {
     private int yearOfBirth = 0;
     private int chosenRange = 70;
 
+    private EditText nameEditText;
+    private EditText surnameEditText;
+    private EditText aboutEditText;
+
     public UserInfoFragment() {
     }
 
@@ -67,18 +71,22 @@ public class UserInfoFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_user_info, container, false);
         seekBar = (SeekBar) view.findViewById(R.id.user_info_fragment_range_seek_bar);
         textView = (TextView) view.findViewById(R.id.user_info_fragment_range_text_field);
         birthdayButton = (Button) view.findViewById(R.id.user_info_fragment_birthday_button);
         birthdayTextView = (TextView) view.findViewById(R.id.user_info_fragment_birthday_text_view);
 
+        nameEditText = (EditText) view.findViewById(R.id.user_info_fragment_name_edit_text);
+        surnameEditText = (EditText) view.findViewById(R.id.user_info_fragment_surname_edit_text);
+        aboutEditText = (EditText) view.findViewById(R.id.user_info_fragment_about_edit_text);
+
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 chosenRange = progress;
+                getActivity().getIntent().putExtra("chosenRange", progress);
                 textView.setText("Range is set to " + chosenRange + " km");
             }
 
@@ -97,9 +105,10 @@ public class UserInfoFragment extends Fragment {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 dayOfBirth = dayOfMonth;
-                monthOfBirth = month;
+                monthOfBirth = (month + 1);
                 yearOfBirth = year;
-                birthdayTextView.setText("Birthday: " + dayOfMonth + "/" + month + "/" + year);
+                birthdayTextView.setText("Birthday: " + dayOfMonth + "/" + (month + 1) + "/" + year);
+                getActivity().getIntent().putExtra("userBirthday", dayOfMonth + "/" + (month + 1) + "/" + year);
             }
         };
 
@@ -115,6 +124,10 @@ public class UserInfoFragment extends Fragment {
                 datePickerDialog.show();
             }
         });
+
+        nameEditText.addTextChangedListener(new EditTextWatcher("userName"));
+        surnameEditText.addTextChangedListener(new EditTextWatcher("userSurname"));
+        aboutEditText.addTextChangedListener(new EditTextWatcher("aboutUser"));
 
         return view;
     }
@@ -142,6 +155,31 @@ public class UserInfoFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
+    }
+
+    private class EditTextWatcher implements TextWatcher {
+
+        private String intentExtraKey;
+
+        public EditTextWatcher(String intentExtraKey) {
+            this.intentExtraKey = intentExtraKey;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            getActivity().getIntent().putExtra(intentExtraKey, s.toString());
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+
     }
 
 }
