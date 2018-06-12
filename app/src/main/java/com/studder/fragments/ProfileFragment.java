@@ -198,7 +198,7 @@ public class ProfileFragment extends Fragment {
                 builder.setTitle("Change description");
 
                 final EditText input = new EditText(mContext);
-                input.setText(description);
+                input.setText(mDescriptionTextView.getText().toString());
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
                 input.setSingleLine(false);
                 builder.setView(input);
@@ -206,7 +206,34 @@ public class ProfileFragment extends Fragment {
                 builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        SharedPreferences pref = getContext().getSharedPreferences("USER_INFO", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = pref.edit();
+                        editor.putString(UserTable.Cols.DESCRIPTION, input.getText().toString());
+                        editor.apply();
                         mDescriptionTextView.setText(input.getText().toString());
+
+                        String username = pref.getString(UserTable.Cols.USERNAME, "Unknown");
+
+                        String ipConfig = mContext.getResources().getString(R.string.ipconfig);
+                        JsonObject user = new JsonObject();
+                        user.addProperty("username", username);
+                        user.addProperty("description", input.getText().toString());
+                        Ion.with(mContext)
+                                .load("POST","http://"+ipConfig+"/users/update")
+                                //.load("http://10.0.2.2:8080/users/update")
+                                .setJsonObjectBody(user)
+                                .asJsonObject()
+                                .withResponse()
+                                .setCallback(new FutureCallback<Response<JsonObject>>() {
+                                    @Override
+                                    public void onCompleted(Exception e, Response<JsonObject> result) {
+                                        if(result.getHeaders().code() == 200){
+                                            Log.i(TAG, "updated description");
+                                        } else{
+                                            Log.e(TAG, "server response != 200");
+                                        }
+                                    }
+                                });
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
