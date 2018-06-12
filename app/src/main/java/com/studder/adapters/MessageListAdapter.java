@@ -111,7 +111,7 @@ public class MessageListAdapter extends FirestoreRecyclerAdapter<MessageFirestor
             messageText.setText(message.getText());
 
             // Format the stored timestamp into a readable String using method.
-            timeText.setText(ClientUtils.formatDateTime(message.getTimeRecieved().getTime(), ClientUtils.DEFAULT_DATE_TIME_FORMAT));
+            timeText.setText(ClientUtils.formatDateTime(message.getDate().getTime(), ClientUtils.DEFAULT_DATE_TIME_FORMAT));
 
         }
     }
@@ -133,9 +133,9 @@ public class MessageListAdapter extends FirestoreRecyclerAdapter<MessageFirestor
 
 
             // Format the stored timestamp into a readable String using method.
-            timeText.setText(ClientUtils.formatDateTime(message.getTimeRecieved().getTime(), ClientUtils.DEFAULT_DATE_TIME_FORMAT));
+            timeText.setText(ClientUtils.formatDateTime(message.getDate().getTime(), ClientUtils.DEFAULT_DATE_TIME_FORMAT));
 
-            nameText.setText(message.getSender().getUsername());
+            nameText.setText(message.getSender());
 
             // Insert the profile image from the URL into the ImageView.
             //Utils.displayRoundImageFromUrl(mContext, message.getImageUri(), profileImage);

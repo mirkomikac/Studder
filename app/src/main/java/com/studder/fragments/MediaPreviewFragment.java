@@ -100,7 +100,7 @@ public class MediaPreviewFragment extends Fragment {
         usernameTextView.setText(mUsername);
         mediaImageView.setImageBitmap(mediaBitmap);
         mediaDescriptionTextView.setText(mediaDescription);
-        mediaDateAddedTextView.setText(ClientUtils.formatDateTime(mediaDateAdded));
+        mediaDateAddedTextView.setText(ClientUtils.formatDateTime(mediaDateAdded, ClientUtils.DEFAULT_DATE_FORMAT));
 
         userProfilePicture.setOnClickListener(new CloseMediaPreviewFragment());
 

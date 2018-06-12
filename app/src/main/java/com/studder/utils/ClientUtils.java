@@ -30,13 +30,14 @@ public class ClientUtils {
     }
 
 
-    public static Date parseDateTime(String date, String pattern){
+    public static Date parseDateTime(String date, String pattern) {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern, Locale.GERMAN);
         try {
             return sdf.parse(date);
         } catch (ParseException e) {
             return null;
         }
+    }
 
     public static String saveMediaToPhoneStorage(String directory, String filename, String mediaEncoded){
         String sdPath = Environment.getExternalStorageDirectory().getPath();
