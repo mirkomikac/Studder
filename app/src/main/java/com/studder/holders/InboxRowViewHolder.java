@@ -114,7 +114,7 @@ public class InboxRowViewHolder extends RecyclerView.ViewHolder implements View.
 
                 byte[] bitmapBytes = Base64.decode(user.getProfileImageEncoded(), Base64.DEFAULT);
                 Bitmap bmp = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
-                bmp = bmp.createScaledBitmap(bmp, 200, 200, false);
+                bmp = bmp.createScaledBitmap(bmp, 50, 50, false);
                 mUserSeenImageView.setImageBitmap(bmp);
             }
         } else {

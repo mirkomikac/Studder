@@ -134,7 +134,7 @@ public class GalleryItemViewHolder extends RecyclerView.ViewHolder implements Vi
                                 .setPositiveButton(mContext.getResources().getString(R.string.alert_dialog_fragment_profile_delete_options_yes), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog,int which) {
-                                        Ion.with(mContext).load("POST", "http://"+ipConfig+"/media/setProfileImage/" + mMedia.getId())
+                                        Ion.with(mContext).load("GET", "http://"+ipConfig+"/media/setProfileImage/" + mMedia.getId())
                                                 .asJsonObject()
                                                 .withResponse()
                                                 .setCallback(new FutureCallback<Response<JsonObject>>() {
