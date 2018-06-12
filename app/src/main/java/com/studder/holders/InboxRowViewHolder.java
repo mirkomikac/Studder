@@ -39,6 +39,8 @@ public class InboxRowViewHolder extends RecyclerView.ViewHolder implements View.
 
     private Context mContext;
 
+    private ImageView mOnlineStatus;
+
     public InboxRowViewHolder(final View itemView, final Context context) {
         super(itemView);
 
@@ -49,6 +51,8 @@ public class InboxRowViewHolder extends RecyclerView.ViewHolder implements View.
         mUserLastMessageTextView = itemView.findViewById(R.id.text_view_chat_box_row_last_message);
         mUserLastMessageTimeTextClock = itemView.findViewById(R.id.text_clock_chat_box_row_time);
         mUserSeenImageView = itemView.findViewById(R.id.image_view_chat_box_row_seen);
+
+        mOnlineStatus = itemView.findViewById(R.id.text_view_chat_box_row_online_status);
 
         Log.d(TAG, "InboxRowViewHolder(...) -> Fileds Binded");
 
@@ -107,6 +111,11 @@ public class InboxRowViewHolder extends RecyclerView.ViewHolder implements View.
         if(user.getmUserMatch().getLastMessageSeen() != null){
             if(!user.getmUserMatch().getLastMessageSeen()){
                 mUserLastMessageTextView.setTypeface(null, Typeface.BOLD | Typeface.ITALIC);
+
+                byte[] bitmapBytes = Base64.decode(user.getProfileImageEncoded(), Base64.DEFAULT);
+                Bitmap bmp = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
+                bmp = bmp.createScaledBitmap(bmp, 50, 50, false);
+                mUserSeenImageView.setImageBitmap(bmp);
             }
         } else {
             mUserLastMessageTextView.setTypeface(null, Typeface.BOLD | Typeface.ITALIC);
@@ -118,6 +127,12 @@ public class InboxRowViewHolder extends RecyclerView.ViewHolder implements View.
             Bitmap bmp = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
             bmp = bmp.createScaledBitmap(bmp, 350, 350, false);
             mUserImageView.setImageBitmap(bmp);
+        }
+
+        if(user.getOnlineStatus()){
+            mOnlineStatus.setImageDrawable(mContext.getResources().getDrawable(R.drawable.active_dot, null));
+        } else {
+            mOnlineStatus.setImageDrawable(mContext.getResources().getDrawable(R.drawable.nonactive_dot, null));
         }
 
         mUser = user;

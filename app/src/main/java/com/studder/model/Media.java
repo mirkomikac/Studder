@@ -10,6 +10,8 @@ public class Media implements Serializable {
     private static final long serialVersionUID = 6244895049508882158L;
 
     private Long id;
+    private String name;
+    private String contentType;
     private String path;
     private String description;
     private Date timeAdded;
@@ -100,5 +102,22 @@ public class Media implements Serializable {
     public void setEncodedImage(String encodedImage) {
         this.encodedImage = encodedImage;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
 }
 

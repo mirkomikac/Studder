@@ -72,27 +72,51 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             JsonObject user = new JsonObject();
             //when you get username from sharedpref, put it in so server can update...
             SharedPreferences sp = context.getSharedPreferences("USER_INFO", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+
             String username = sp.getString(UserTable.Cols.USERNAME, "Unknown value");
             user.addProperty("username", username);
             if(preference instanceof EditTextPreference){
                 Log.i(TAG, preference.getKey());
                 switch (preference.getKey()){
-                    case "example_text": user.addProperty("name", stringValue); break;
-                    case "example_surname": user.addProperty("surname", stringValue); break;
-                    //case "example_email": user.addProperty("username", stringValue);
-                    //case "example_age": user.addProperty("age", stringValue);
-                    case "example_city": user.addProperty("city", stringValue); break;
-                    case "example_location_radius": user.addProperty("radius", stringValue); break;
-                }
+                    case UserTable.Cols.NAME: {
+                        user.addProperty("name", stringValue);
+                        editor.putString(UserTable.Cols.NAME, stringValue);
+                        break;
+                    }
+                    case UserTable.Cols.SURNAME: {
+                        user.addProperty("surname", stringValue);
+                        editor.putString(UserTable.Cols.SURNAME, stringValue);
+                        break;
+                    }
+                    case UserTable.Cols.CITY: {
+                        user.addProperty("city", stringValue);
+                        editor.putString(UserTable.Cols.CITY,  stringValue);
+                        break;
+                    }
+                    case UserTable.Cols.RADIUS: {
+                        user.addProperty("radius", stringValue);
+                        editor.putInt(UserTable.Cols.RADIUS, Integer.parseInt(stringValue));
+                        break;
+                    }
+            }
             } else if(preference instanceof ListPreference){
                 Log.i(TAG, preference.getKey());
                 switch (preference.getKey()){
-                    case "sex_list" : user.addProperty("userGender", stringValue);
-                    case "interested_in_list" : user.addProperty("swipeThrow", stringValue);
+                    case UserTable.Cols.USER_GENDER : {
+                        user.addProperty("userGender", stringValue);
+                        editor.putString(UserTable.Cols.USER_GENDER, stringValue);
+                        break;
+                    }
+                    case UserTable.Cols.SWIPE_THROW: {
+                        user.addProperty("swipeThrow", stringValue);
+                        editor.putString(UserTable.Cols.SWIPE_THROW, stringValue);
+                        break;
+                    }
                 }
             }
 
-
+            editor.apply();
 
 
             if (preference instanceof ListPreference) {
@@ -180,10 +204,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         // Trigger the listener immediately with the preference's
         // current value.
-        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                PreferenceManager
-                        .getDefaultSharedPreferences(preference.getContext())
-                        .getString(preference.getKey(), ""));
+        try{
+            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+                    context.getSharedPreferences("USER_INFO", MODE_PRIVATE)
+                            .getString(preference.getKey(), ""));
+        } catch(Exception e){
+            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+                    context.getSharedPreferences("USER_INFO", MODE_PRIVATE)
+                            .getInt(preference.getKey(), -1));
+        }
+
     }
 
     @Override
@@ -259,30 +289,34 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             String surname = sp.getString(UserTable.Cols.SURNAME, "Unknown value");
             String userGender = sp.getString(UserTable.Cols.USER_GENDER, "Unknown value");
             String city = sp.getString(UserTable.Cols.CITY, "Unknown value");
-            if(findPreference("example_text") instanceof EditTextPreference) {
-                EditTextPreference namePref = (EditTextPreference) findPreference("example_text");
+            if(findPreference(UserTable.Cols.NAME) instanceof EditTextPreference) {
+                EditTextPreference namePref = (EditTextPreference) findPreference(UserTable.Cols.NAME);
                 namePref.setSummary(name);
                 namePref.setText(name);
             }
-            if(findPreference("example_surname") instanceof EditTextPreference) {
-                EditTextPreference surnamePref = (EditTextPreference) findPreference("example_surname");
+            if(findPreference(UserTable.Cols.SURNAME) instanceof EditTextPreference) {
+                EditTextPreference surnamePref = (EditTextPreference) findPreference(UserTable.Cols.SURNAME);
                 surnamePref.setSummary(surname);
                 surnamePref.setText(surname);
             }
 
             //AGE doesn't exist in preferences
 
-            if(findPreference("sex_list") instanceof ListPreference) {
-                ListPreference sexListPref = (ListPreference) findPreference("sex_list");
+            if(findPreference(UserTable.Cols.USER_GENDER) instanceof ListPreference) {
+                ListPreference sexListPref = (ListPreference) findPreference(UserTable.Cols.USER_GENDER);
                 //FEMAIL VS FEMALE.....
-                sexListPref.setSummary(userGender);
-                if(userGender.equals("MALE"))
+
+                if(userGender.equals("MALE")){
                     sexListPref.setValueIndex(0);
-                else if(userGender.equals("FEMAIL"))
+                    sexListPref.setSummary("MALE");
+                }
+                else if(userGender.equals("FEMAIL")){
                     sexListPref.setValueIndex(1);
+                    sexListPref.setSummary("FEMALE");
+                }
             }
-            if(findPreference("example_city") instanceof EditTextPreference){
-                EditTextPreference cityPref = (EditTextPreference) findPreference("example_city");
+            if(findPreference(UserTable.Cols.CITY) instanceof EditTextPreference){
+                EditTextPreference cityPref = (EditTextPreference) findPreference(UserTable.Cols.CITY);
                 cityPref.setSummary(city);
                 cityPref.setText(city);
             }
@@ -300,12 +334,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("example_text"));
-            //bindPreferenceSummaryToValue(findPreference("example_email"));
-            bindPreferenceSummaryToValue(findPreference("example_surname"));
-            bindPreferenceSummaryToValue(findPreference("example_age"));
-            bindPreferenceSummaryToValue(findPreference("sex_list"));
-            bindPreferenceSummaryToValue(findPreference("example_city"));
+            bindPreferenceSummaryToValue(findPreference(UserTable.Cols.NAME));
+            bindPreferenceSummaryToValue(findPreference(UserTable.Cols.SURNAME));
+            bindPreferenceSummaryToValue(findPreference(UserTable.Cols.USER_GENDER));
+            bindPreferenceSummaryToValue(findPreference(UserTable.Cols.CITY));
         }
 
         @Override
@@ -327,22 +359,28 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             SharedPreferences sp = context.getSharedPreferences("USER_INFO", MODE_PRIVATE);
 
+
+
             Integer locationRadius = sp.getInt(UserTable.Cols.RADIUS, -1);
             String interestedIn = sp.getString(UserTable.Cols.SWIPE_THROW, "Unknown value");
 
-            if(findPreference("example_location_radius") instanceof EditTextPreference){
-                EditTextPreference radiusPref = (EditTextPreference) findPreference("example_location_radius");
+            if(findPreference(UserTable.Cols.RADIUS) instanceof EditTextPreference){
+                EditTextPreference radiusPref = (EditTextPreference) findPreference(UserTable.Cols.RADIUS);
                 radiusPref.setSummary(locationRadius.toString());
                 radiusPref.setText(locationRadius.toString());
             }
 
-            if(findPreference("interested_in_list") instanceof  ListPreference){
-                ListPreference interestedInPref = (ListPreference) findPreference("interested_in_list");
-                interestedInPref.setSummary(interestedIn);
-                if(interestedIn.equals("MALE"))
+            if(findPreference(UserTable.Cols.SWIPE_THROW) instanceof  ListPreference){
+                ListPreference interestedInPref = (ListPreference) findPreference(UserTable.Cols.SWIPE_THROW);
+                if(interestedIn.equals("MALE")){
+                    interestedInPref.setSummary("MALE");
                     interestedInPref.setValueIndex(0);
+                }
                 else if(interestedIn.equals("FEMAIL"))
+                {
                     interestedInPref.setValueIndex(1);
+                    interestedInPref.setSummary("FEMALE");
+                }
             }
 
             return super.onCreateView(inflater, container, savedInstanceState);
@@ -355,8 +393,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             setHasOptionsMenu(true);
 
             //bind summaries to their values
-            bindPreferenceSummaryToValue(findPreference("example_location_radius"));
-            bindPreferenceSummaryToValue(findPreference("interested_in_list"));
+            bindPreferenceSummaryToValue(findPreference(UserTable.Cols.RADIUS));
+            bindPreferenceSummaryToValue(findPreference(UserTable.Cols.SWIPE_THROW));
         }
 
         @Override

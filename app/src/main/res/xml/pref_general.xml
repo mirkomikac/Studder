@@ -10,9 +10,8 @@
     <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
     <EditTextPreference
         android:capitalize="words"
-        android:defaultValue="@string/pref_default_display_name"
         android:inputType="textCapWords"
-        android:key="example_text"
+        android:key="name"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
@@ -20,9 +19,8 @@
 
     <EditTextPreference
         android:capitalize="words"
-        android:defaultValue="@string/pref_default_display_surname"
         android:inputType="textCapWords"
-        android:key="example_surname"
+        android:key="surname"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
@@ -67,21 +65,11 @@
         android:defaultValue="Pw..."
         />
 
-    <EditTextPreference
-        android:capitalize="words"
-        android:defaultValue="@string/pref_default_display_age"
-        android:inputType="number"
-        android:key="example_age"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/pref_title_display_age" />
-
     <ListPreference
         android:defaultValue="0"
         android:entries="@array/pref_sex_list_titles"
         android:entryValues="@array/pref_sex_list_values"
-        android:key="sex_list"
+        android:key="user_gender"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_title_sex" />
@@ -90,7 +78,7 @@
         android:capitalize="words"
         android:defaultValue="@string/pref_default_display_city"
         android:inputType="text"
-        android:key="example_city"
+        android:key="city"
         android:maxLines="2"
         android:selectAllOnFocus="true"
         android:singleLine="false"

@@ -99,13 +99,6 @@ public class LoginActivity extends AppCompatActivity {
         }*/
 
 
-        Log.d(TAG, "onCreate(Bundle)");
-        try {
-            Log.d(TAG, FirebaseInstanceId.getInstance().getToken("581929999213", "FCM"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         if(SaveSharedPreferences.getLoggedIn(getApplicationContext())){
             Log.d(TAG, "onCreate(Bundle) : already logged in");
             Intent navigationActivity = new Intent(LoginActivity.this, NavigationActivity.class);
@@ -346,10 +339,20 @@ public class LoginActivity extends AppCompatActivity {
                                 saveSharedPreferences(result.getResult());
 
                                 // Tim6 -> If First Time
-                                Intent personalizeActivity = new Intent(LoginActivity.this, PersonalizeActivity.class);
-                                startActivity(personalizeActivity);
+                                SharedPreferences pref = getApplicationContext().getSharedPreferences("USER_INFO", MODE_PRIVATE);
 
-                                finish();
+                                if(pref.getBoolean(UserTable.Cols.FIRST_TIME, true))
+                                {
+                                    Intent personalizeActivity = new Intent(LoginActivity.this, PersonalizeActivity.class);
+                                    startActivity(personalizeActivity);
+                                    finish();
+                                } else {
+                                    Intent navigationActivity = new Intent(LoginActivity.this, NavigationActivity.class);
+                                    startActivity(navigationActivity);
+                                    finish();
+                                }
+
+
                             } else {
                                 Log.d(TAG, "UserLoginTask -> doInBackground -> Ion Response => User == null -> response code == " + result.getHeaders().code());
 
@@ -429,6 +432,19 @@ public class LoginActivity extends AppCompatActivity {
             } else{
                 editor.putString(UserTable.Cols.CITY, "-1");
             }
+
+            if(user.getFirstTimeLogin() != null){
+                editor.putBoolean(UserTable.Cols.FIRST_TIME_LOGIN, user.getFirstTimeLogin());
+            } else {
+                editor.putBoolean(UserTable.Cols.FIRST_TIME_LOGIN, false);
+            }
+
+            if(user.getFirstTIme() != null){
+                editor.putBoolean(UserTable.Cols.FIRST_TIME, user.getFirstTIme());
+            } else {
+                editor.putBoolean(UserTable.Cols.FIRST_TIME, false);
+            }
+
             editor.apply();
 
             Log.d(TAG, "saveSharedPreferenes(User) -> placing user info into shared preferences -> success");

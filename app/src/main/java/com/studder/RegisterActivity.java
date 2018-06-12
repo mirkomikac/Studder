@@ -26,6 +26,7 @@ public class RegisterActivity extends AppCompatActivity {
     public static final String TAG = "RegisterActivity";
 
     private EditText mFullnameEditText;
+    private EditText mSurnameEditText;
     private EditText mEmailEditText;
     private EditText mPasswordEditText;
     private EditText mConfirmPasswordEditText;
@@ -45,6 +46,7 @@ public class RegisterActivity extends AppCompatActivity {
         mEmailEditText = (EditText) findViewById(R.id.edit_text_activity_register_email);
         mSignUpButton = (Button) findViewById(R.id.sign_up_button);
         mFullnameEditText = (EditText) findViewById(R.id.edit_text_activity_register_fullname);
+        mSurnameEditText = (EditText) findViewById(R.id.edit_text_activity_register_surname);
         mPasswordEditText = (EditText) findViewById(R.id.edit_text_activity_register_password);
         mConfirmPasswordEditText = (EditText) findViewById(R.id.edit_text_activity_register_confirm_password);
         mRegisterFormLinearLayout = findViewById(R.id.linear_layout_activity_register_register_form);
@@ -206,6 +208,8 @@ public class RegisterActivity extends AppCompatActivity {
 
         JsonObject  json = new JsonObject ();
 
+        json.addProperty("name", mFullnameEditText.getText().toString());
+        json.addProperty("surname", mSurnameEditText.getText().toString());
         json.addProperty("username", mEmailEditText.getText().toString());
         json.addProperty("password", mPasswordEditText.getText().toString());
 

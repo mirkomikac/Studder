@@ -52,18 +52,25 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, ADMIN_CHANNEL_ID);
 
+
         if(remoteMessage.getData().get("type").equals("message")){
+
             /*byte[] bitmapBytes = decode(remoteMessage.getData().get("image"), DEFAULT);
             Bitmap bmp = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
             bmp = bmp.createScaledBitmap(bmp, 100, 100, false);*/
 
             Intent chatActivityIntent = new Intent(getApplicationContext(), ChatActivity.class);
+
+            //chatActivityIntent.putExtra(UserMatchTable.Cols._ID, Long.parseLong(remoteMessage.getData().get("matchId")));
+            //chatActivityIntent.putExtra(UserTable.Cols._ID, Long.parseLong(remoteMessage.getData().get("userId")));
+
             chatActivityIntent.putExtra(UserMatchTable.Cols._ID, remoteMessage.getData().get("matchId"));
             chatActivityIntent.putExtra(UserTable.Cols._ID, remoteMessage.getData().get("userId"));
 
             PendingIntent pendingIntent=PendingIntent.getActivity(getApplicationContext(),0,chatActivityIntent,0);
 
             notificationBuilder.setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                    //.setContentTitle(remoteMessage.getData().get("title"))
                     .setContentTitle(remoteMessage.getNotification().getTitle())
                     .setContentText(remoteMessage.getData().get("message"))
                     .addAction(-1,"Reply",pendingIntent)
@@ -74,6 +81,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             NotificationManager notif = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             notif.notify(notificationId, notificationBuilder.build());
+          
         } else if(remoteMessage.getData().get("type").equals("match")){
             Intent navigationActivityIntent = new Intent(getApplicationContext(), NavigationActivity.class);
             navigationActivityIntent.putExtra(UserMatchTable.Cols._ID, remoteMessage.getData().get("matchId"));
@@ -92,6 +100,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             NotificationManager notif = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             notif.notify(notificationId, notificationBuilder.build());
+          
         } else {
             notificationBuilder.setSmallIcon(R.drawable.ic_notifications_black_24dp)
                     .setContentTitle(remoteMessage.getData().get("title"))
