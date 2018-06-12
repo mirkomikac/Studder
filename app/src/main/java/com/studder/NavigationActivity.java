@@ -7,11 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -24,21 +20,15 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
@@ -46,10 +36,7 @@ import com.studder.database.schema.UserTable;
 import com.studder.fragments.InboxFragment;
 import com.studder.fragments.ProfileFragment;
 import com.studder.model.User;
-import com.studder.model.UserMatch;
 import com.studder.sharedpreferconfiguration.SaveSharedPreferences;
-
-import org.json.JSONObject;
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -64,9 +51,7 @@ public class NavigationActivity extends AppCompatActivity
     private String provider;
 
 
-    private TextView usernameTV;
     private TextView drawerProfileNameTextView;
-    private ImageView drawerProfileImageImageView;
 
 
     @Override
@@ -95,7 +80,6 @@ public class NavigationActivity extends AppCompatActivity
         navigationView.getMenu().findItem(R.id.nav_share).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_send).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_gallery).setVisible(false);
-        navigationView.getMenu().findItem(R.id.nav_slideshow).setVisible(false);
 
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -144,7 +128,11 @@ public class NavigationActivity extends AppCompatActivity
             }
         } else {
             // permission has been granted, continue as usual
+
             Location location = mLocationManager.getLastKnownLocation(provider);
+            if(location == null){
+                location = new Location(provider);
+            }
 
             SharedPreferences preferences = getApplicationContext().getSharedPreferences("USER_INFO", Context.MODE_PRIVATE);
             final String username = preferences.getString(UserTable.Cols.USERNAME, "");
@@ -310,7 +298,6 @@ public class NavigationActivity extends AppCompatActivity
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        usernameTV = findViewById(R.id.textView123);
 
         drawer.closeDrawer(GravityCompat.START);
         return true;

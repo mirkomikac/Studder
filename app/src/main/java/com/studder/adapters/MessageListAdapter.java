@@ -47,8 +47,10 @@ public class MessageListAdapter extends FirestoreRecyclerAdapter<MessageFirestor
                 break;
             case VIEW_TYPE_MESSAGE_RECEIVED:
                 ((ReceivedMessageHolder) holder).bind(model);
+                break;
             case VIEW_TYPE_MESSAGE_RECEIVED_AFTER:
                 ((ReceivedMessageHolder) holder).bind(model);
+                break;
         }
     }
 

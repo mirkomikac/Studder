@@ -154,8 +154,8 @@ public class ChatActivity extends AppCompatActivity {
                             }
                         });
             }
-          
-            String ipConfig = getResources().getString(R.string.ipconfig);
+            final String ipConfig = getResources().getString(R.string.ipconfig);
+
             Ion.with(getApplicationContext())
                     .load("http://"+ipConfig+"/users/" + userMatchId)
                     .as(new TypeToken<User>() {})
@@ -178,9 +178,6 @@ public class ChatActivity extends AppCompatActivity {
                     mLinearLayoutManager.scrollToPosition(mRecyclerAdapter.getItemCount() - 1);
                 }
             });
-
-            final String ipConfig = getResources().getString(R.string.ipconfig);
-
 
             sendButton.setOnClickListener(new View.OnClickListener() {
                 @Override
