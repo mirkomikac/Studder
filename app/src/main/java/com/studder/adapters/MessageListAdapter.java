@@ -115,7 +115,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             messageText.setText(message.getText());
 
             // Format the stored timestamp into a readable String using method.
-            timeText.setText(ClientUtils.formatDateTime(message.getTimeRecieved().getTime()));
+            timeText.setText(ClientUtils.formatDateTime(message.getTimeRecieved().getTime(), ClientUtils.DEFAULT_DATE_TIME_FORMAT));
         }
     }
 
@@ -136,7 +136,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             messageText.setText(message.getText());
 
             // Format the stored timestamp into a readable String using method.
-            timeText.setText(ClientUtils.formatDateTime(message.getTimeRecieved().getTime()));
+            timeText.setText(ClientUtils.formatDateTime(message.getTimeRecieved().getTime(), ClientUtils.DEFAULT_DATE_TIME_FORMAT));
 
             nameText.setText(message.getSender().getUsername());
 
