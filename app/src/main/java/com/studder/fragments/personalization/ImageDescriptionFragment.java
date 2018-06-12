@@ -1,7 +1,9 @@
 package com.studder.fragments.personalization;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -13,6 +15,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,10 +27,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.studder.R;
+import com.studder.database.schema.UserTable;
 import com.studder.model.Profile;
+import com.studder.utils.ClientUtils;
 import com.studder.utils.ImageUtils;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -55,7 +63,7 @@ public class ImageDescriptionFragment extends Fragment {
     private ImageView mSelectedImageView;
     private ImageButton mTakeImageButton;
     private Button mSelectImageButton;
-    private EditText mEnterDescriptionButton;
+    private EditText mEnterDescriptionEditText;
 
     private File mImageFile;
 
@@ -161,7 +169,7 @@ public class ImageDescriptionFragment extends Fragment {
         mSelectedImageView = view.findViewById(R.id.image_view_personalize_image_description_selected_image_display);
         mTakeImageButton = view.findViewById(R.id.image_button_personalize_image_description_take_image);
         mSelectImageButton = view.findViewById(R.id.image_button_personalize_image_description_select_image_from_galery);
-
+        mEnterDescriptionEditText = view.findViewById(R.id.edit_text_personalize_image_description);
 
         Log.d(TAG, "onCreateView -> newCaptureImageIntent");
         final Intent captureImage = newCaptureImageIntent();
@@ -191,6 +199,8 @@ public class ImageDescriptionFragment extends Fragment {
             }
         });
 
+        mEnterDescriptionEditText.addTextChangedListener(new EditTextWatcher("profileImageDescription"));
+
         updateSelectedImageView();
 
         return view;
@@ -218,6 +228,11 @@ public class ImageDescriptionFragment extends Fragment {
         } else {
             Bitmap bitmap = ImageUtils.getScaledBitmap(mImageFile.getPath(), getActivity());
             mSelectedImageView.setImageBitmap(bitmap);
+
+            SharedPreferences preferences = getActivity().getApplicationContext().getSharedPreferences("USER_INFO", Context.MODE_PRIVATE);
+            final String username = preferences.getString(UserTable.Cols.USERNAME, "");
+
+            getActivity().getIntent().putExtra("userProfilePicture", mImageFile.getPath());
         }
     }
 
@@ -275,6 +290,31 @@ public class ImageDescriptionFragment extends Fragment {
         Log.d(TAG, "getImagePath(Uri uri) : return == " + path);
 
         return path;
+    }
+
+    private class EditTextWatcher implements TextWatcher {
+
+        private String intentExtraKey;
+
+        public EditTextWatcher(String intentExtraKey) {
+            this.intentExtraKey = intentExtraKey;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            getActivity().getIntent().putExtra(intentExtraKey, s.toString());
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+
     }
 
 }

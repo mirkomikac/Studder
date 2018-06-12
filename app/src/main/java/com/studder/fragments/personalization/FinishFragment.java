@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -21,9 +22,10 @@ import com.koushikdutta.ion.Response;
 import com.studder.NavigationActivity;
 import com.studder.R;
 import com.studder.database.schema.UserTable;
-import com.studder.model.User;
+import com.studder.model.Media;
 import com.studder.utils.ClientUtils;
 
+import java.io.File;
 import java.util.Date;
 
 /**
@@ -129,10 +131,6 @@ public class FinishFragment extends Fragment {
                         @Override
                         public void onCompleted(Exception e, Response<JsonObject> result) {
                             if(result.getHeaders().code() == 200) {
-                                Intent navigationActivity = getFinishIntent();
-                                startActivity(navigationActivity);
-                                getActivity().finish();
-
                                 SharedPreferences.Editor editor = preferences.edit();
                                 editor.putString(UserTable.Cols.USERNAME, username);
                                 editor.putString(UserTable.Cols.NAME, userName);
@@ -140,6 +138,56 @@ public class FinishFragment extends Fragment {
                                 editor.putString(UserTable.Cols.DESCRIPTION, aboutUser);
                                 editor.putString(UserTable.Cols.BIRTHDAY, userBirthday);
                                 editor.putInt(UserTable.Cols.RADIUS, chosenRange);
+
+                                new UpdateProfilePicture().doInBackground();
+                            }
+                        }
+                    });
+            return null;
+        }
+    }
+
+    public class UpdateProfilePicture extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            Intent intent = getActivity().getIntent();
+
+            String profileImagePath = intent.getStringExtra("userProfilePicture");
+            File profileImageFile = new File(profileImagePath);
+            String profileImageDescription = intent.getStringExtra("profileImageDescription");
+
+            final String ipConfig = getResources().getString(R.string.ipconfig);
+
+            Ion.with(getContext())
+                    .load("POST", "http://" + ipConfig + "/media/upload/fixedText")
+                    .setMultipartParameter("file", "file")
+                    .setMultipartFile("file", "image/jpg", profileImageFile)
+                    .as(new TypeToken<Media>() {})
+                    .withResponse()
+                    .setCallback(new FutureCallback<Response<Media>>() {
+                        @Override
+                        public void onCompleted(Exception e, Response<Media> result) {
+                            if (result.getHeaders().code() == 200) {
+
+                                Media media = result.getResult();
+
+                                Ion.with(getContext())
+                                        .load("GET","http://" + ipConfig + "/media/setProfileImage/" + media.getId())
+                                        .asJsonObject()
+                                        .withResponse()
+                                        .setCallback(new FutureCallback<Response<JsonObject>>() {
+
+                                            @Override
+                                            public void onCompleted(Exception e, Response<JsonObject> result) {
+                                                if(result.getHeaders().code() == 200) {
+                                                    Intent navigationActivity = getFinishIntent();
+                                                    startActivity(navigationActivity);
+                                                    getActivity().finish();
+                                                }
+                                            }
+
+                                        });
                             }
                         }
                     });
