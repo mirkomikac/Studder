@@ -132,7 +132,7 @@ public class InboxFragment extends Fragment {
                                 System.err.println("Listen failed:" + e);
                                 return;
                             }
-                            refreshMatched("");
+                            new MatchedFetch().doInBackground((Void) null);
                         }
                     });
 
@@ -145,7 +145,7 @@ public class InboxFragment extends Fragment {
                                 System.err.println("Listen failed:" + e);
                                 return;
                             }
-                            refreshMatched("");
+                            new MatchedFetch().doInBackground((Void) null);
                         }
                     });
         }
@@ -257,7 +257,7 @@ public class InboxFragment extends Fragment {
 
         Log.d(TAG, "onResume()");
 
-        refreshMatched("");
+        new MatchedFetch().doInBackground((Void) null);
         super.onResume();
     }
 
