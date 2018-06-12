@@ -151,22 +151,17 @@ public class ChatActivity extends AppCompatActivity {
                             @Override
                             public void onCompleted(Exception e, Response<UserMatch> result) {
                                 userMatch = result.getResult();
+                                if(userMatch.getParticipant1().getId() == loggedUser.getId()){
+                                    getSupportActionBar().setTitle(userMatch.getParticipant2().getName() + " " + userMatch.getParticipant2().getSurname());
+                                } else {
+                                    getSupportActionBar().setTitle(userMatch.getParticipant1().getName() + " " + userMatch.getParticipant1().getSurname());
+                                }
                             }
                         });
             }
             final String ipConfig = getResources().getString(R.string.ipconfig);
 
-            Ion.with(getApplicationContext())
-                    .load("http://"+ipConfig+"/users/" + userMatchId)
-                    .as(new TypeToken<User>() {})
-                    .withResponse()
-                    .setCallback(new FutureCallback<Response<User>>() {
-                        @Override
-                        public void onCompleted(Exception e, Response<User> result) {
-                            user2 = result.getResult();
-                            getSupportActionBar().setTitle(user2.getName() + " " + user2.getSurname());
-                        }
-                    });
+
 
             sendButton = (Button) findViewById(R.id.button_chatbox_send);
             editText = (EditText) findViewById(R.id.edittext_chatbox);

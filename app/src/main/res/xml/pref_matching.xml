@@ -5,7 +5,7 @@
         android:capitalize="words"
         android:defaultValue="@string/pref_default_display_location_radius"
         android:inputType="number"
-        android:key="example_location_radius"
+        android:key="radius"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
@@ -15,7 +15,7 @@
         android:defaultValue="0"
         android:entries="@array/pref_interested_in_list"
         android:entryValues="@array/pref_interested_in_list_values"
-        android:key="interested_in_list"
+        android:key="swipe_throw"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_title_interested_in" />

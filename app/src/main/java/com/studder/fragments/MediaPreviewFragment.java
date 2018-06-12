@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -45,6 +46,7 @@ public class MediaPreviewFragment extends Fragment {
     private ImageView mediaImageView;
     private TextView mediaDescriptionTextView;
     private TextView mediaDateAddedTextView;
+    private String mUsername;
 
     private OnFragmentInteractionListener mListener;
 
@@ -69,6 +71,8 @@ public class MediaPreviewFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -80,7 +84,8 @@ public class MediaPreviewFragment extends Fragment {
         mediaDateAddedTextView = view.findViewById(R.id.media_preview_fragment_media_date_added_text_view);
 
         Intent intent = getActivity().getIntent();
-        String username = intent.getStringExtra("userUsername");
+        mUsername = intent.getStringExtra("userUsername");
+
 
         String encodedProfileImage = ClientUtils.readMediaFromFile(intent.getStringExtra("userProfileImagePath"));
         Bitmap profilePicture = ClientUtils.getBitmapForMedia(encodedProfileImage);
@@ -92,7 +97,7 @@ public class MediaPreviewFragment extends Fragment {
         String mediaDescription = intent.getStringExtra("mediaDescription");
 
         userProfilePicture.setImageBitmap(profilePicture);
-        usernameTextView.setText(username);
+        usernameTextView.setText(mUsername);
         mediaImageView.setImageBitmap(mediaBitmap);
         mediaDescriptionTextView.setText(mediaDescription);
         mediaDateAddedTextView.setText(ClientUtils.formatDateTime(mediaDateAdded));

@@ -18,6 +18,9 @@ public class MediaPreviewActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.media_preview_toolbar);
         toolbar.setTitle("Media");
 
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         launchMediaPreviewFragment();
     }
 
